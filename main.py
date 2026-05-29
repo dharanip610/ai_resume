@@ -6,10 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from backend.parser import extract_resume_data
-from backend.supabase_client import insert_data, load_data
-from backend.excel_export import generate_excel
-from backend.jd_analyzer import analyze_candidates
+from parser import extract_resume_data
+from supabase_client import insert_data, load_data
+from excel_export import generate_excel
+from jd_analyzer import analyze_candidates
 
 # =========================
 # APP
@@ -17,23 +17,24 @@ from backend.jd_analyzer import analyze_candidates
 app = FastAPI(title="AI Resume System")
 
 # =========================
-# CORS
+# CORS (IMPORTANT FIX)
 # =========================
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],   # for production you can restrict later
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # =========================
-# UPLOAD DIR
+# UPLOAD DIRECTORY
 # =========================
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
 # =========================
-# MODEL
+# REQUEST MODEL
 # =========================
 class JDRequest(BaseModel):
     job_description: str
@@ -47,7 +48,7 @@ def clean_text(value):
     return str(value).replace("\x00", "").replace("\u0000", "")
 
 # =========================
-# HOME
+# ROOT CHECK
 # =========================
 @app.get("/")
 def home():
@@ -65,14 +66,14 @@ async def upload(file: UploadFile = File(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        data = extract_resume_data(str(file_path))
+        extracted = extract_resume_data(str(file_path))
 
         data = {
-            "name": clean_text(data.get("name")),
-            "email": clean_text(data.get("email")),
-            "phone": clean_text(data.get("phone")),
-            "skills": clean_text(data.get("skills")),
-            "raw_text": clean_text(data.get("raw_text")),
+            "name": clean_text(extracted.get("name")),
+            "email": clean_text(extracted.get("email")),
+            "phone": clean_text(extracted.get("phone")),
+            "skills": clean_text(extracted.get("skills")),
+            "raw_text": clean_text(extracted.get("raw_text")),
             "filename": file.filename,
             "status": "parsed"
         }
@@ -89,7 +90,7 @@ async def upload(file: UploadFile = File(...)):
 # GET RESUMES
 # =========================
 @app.get("/resumes")
-def resumes():
+def get_resumes():
 
     try:
         data = load_data()
@@ -121,7 +122,7 @@ def analyze(payload: JDRequest):
 # EXPORT EXCEL
 # =========================
 @app.get("/export")
-def export():
+def export_excel():
 
     try:
         file_path = generate_excel()

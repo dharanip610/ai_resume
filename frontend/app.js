@@ -1,10 +1,24 @@
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://ai-resume-xbi6.onrender.com";
 
 
-// ======================================================
+// ==============================
+// BACKEND CHECK (IMPORTANT)
+// ==============================
+async function checkBackend() {
+    try {
+        const res = await fetch(`${API_BASE}/`);
+        const data = await res.json();
+        console.log("Backend OK:", data);
+    } catch (err) {
+        console.error("Backend not reachable:", err);
+    }
+}
+checkBackend();
+
+
+// ==============================
 // ELEMENTS
-// ======================================================
-
+// ==============================
 const fileInput = document.getElementById("fileInput");
 const uploadButton = document.getElementById("uploadButton");
 const downloadButton = document.getElementById("downloadButton");
@@ -17,46 +31,39 @@ const failedCard = document.getElementById("failedCard");
 
 const resumeList = document.getElementById("resumeList");
 
-// JD
 const jdInput = document.getElementById("jdInput");
 const analyzeButton = document.getElementById("analyzeButton");
 const matchResults = document.getElementById("matchResults");
 
 
-// ======================================================
+// ==============================
 // COUNTERS
-// ======================================================
-
+// ==============================
 let uploadsCount = 0;
 let parsedCount = 0;
 let failedCount = 0;
 
 
-// ======================================================
+// ==============================
 // STATUS
-// ======================================================
-
+// ==============================
 function setStatus(message, isError = false) {
     statusBox.textContent = message;
     statusBox.className = isError ? "status error" : "status success";
 }
 
 
-// ======================================================
+// ==============================
 // SAFE ARRAY
-// ======================================================
-
+// ==============================
 function safeArray(data) {
-    if (!data) return [];
-    if (Array.isArray(data)) return data;
-    return [];
+    return Array.isArray(data) ? data : [];
 }
 
 
-// ======================================================
+// ==============================
 // UPDATE CARDS
-// ======================================================
-
+// ==============================
 function updateCards() {
     totalCard.textContent = `Total Uploads: ${uploadsCount}`;
     parsedCard.textContent = `Parsed: ${parsedCount}`;
@@ -64,10 +71,9 @@ function updateCards() {
 }
 
 
-// ======================================================
+// ==============================
 // RENDER RESUMES
-// ======================================================
-
+// ==============================
 function renderResumes(resumes) {
 
     resumes = safeArray(resumes);
@@ -80,27 +86,20 @@ function renderResumes(resumes) {
     resumeList.innerHTML = resumes.map(r => `
         <div class="resume-item">
             <h3>${r.name || "Unknown Candidate"}</h3>
-
             <p><b>Email:</b> ${r.email || "N/A"}</p>
             <p><b>Phone:</b> ${r.phone || "N/A"}</p>
             <p><b>Skills:</b> ${r.skills || "N/A"}</p>
             <p><b>File:</b> ${r.filename || "N/A"}</p>
-
-            ${r.ats_score !== undefined
-                ? `<p><b>ATS Score:</b> ${r.ats_score}%</p>`
-                : ""
-            }
+            ${r.ats_score !== undefined ? `<p><b>ATS Score:</b> ${r.ats_score}%</p>` : ""}
         </div>
     `).join("");
 }
 
 
-// ======================================================
+// ==============================
 // LOAD RESUMES
-// ======================================================
-
+// ==============================
 async function loadResumes() {
-
     try {
         const res = await fetch(`${API_BASE}/resumes`);
         if (!res.ok) throw new Error("Failed");
@@ -122,10 +121,9 @@ async function loadResumes() {
 }
 
 
-// ======================================================
-// UPLOAD
-// ======================================================
-
+// ==============================
+// UPLOAD FILES
+// ==============================
 async function uploadFiles() {
 
     const files = fileInput.files;
@@ -153,7 +151,6 @@ async function uploadFiles() {
             });
 
             if (!res.ok) throw new Error(await res.text());
-
             success++;
 
         } catch (e) {
@@ -169,14 +166,14 @@ async function uploadFiles() {
     setStatus(`Uploaded ${success} files`);
 
     await loadResumes();
+
     uploadButton.disabled = false;
 }
 
 
-// ======================================================
-// DOWNLOAD
-// ======================================================
-
+// ==============================
+// DOWNLOAD EXCEL
+// ==============================
 async function downloadExcel() {
 
     downloadButton.disabled = true;
@@ -206,10 +203,9 @@ async function downloadExcel() {
 }
 
 
-// ======================================================
+// ==============================
 // ANALYZE JD
-// ======================================================
-
+// ==============================
 async function analyzeJobDescription() {
 
     const jdText = jdInput.value.trim();
@@ -223,25 +219,21 @@ async function analyzeJobDescription() {
     setStatus("AI analyzing...");
 
     try {
-
         const res = await fetch(`${API_BASE}/analyze-jd`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                job_description: jdText
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ job_description: jdText })
         });
 
         if (!res.ok) throw new Error();
 
         const data = await res.json();
-
         renderMatchResults(data);
+
         setStatus("AI matching done");
 
     } catch (err) {
+        console.error(err);
         setStatus("Analysis failed", true);
     }
 
@@ -249,41 +241,31 @@ async function analyzeJobDescription() {
 }
 
 
-// ======================================================
-// 🔥 NEW: WHY SELECTED AI EXPLANATION
-// ======================================================
-
-function generateWhySelected(candidate, jdSkills) {
+// ==============================
+// WHY SELECTED AI
+// ==============================
+function generateWhySelected(candidate) {
 
     const matched = safeArray(candidate.matched_skills).length;
     const missing = safeArray(candidate.missing_skills).length;
 
     let reason = [];
 
-    if (matched > 0) {
-        reason.push(`Matched ${matched} required skills`);
-    }
+    if (matched > 0) reason.push(`Matched ${matched} skills`);
 
-    if (candidate.ats_score > 80) {
-        reason.push("High ATS compatibility");
-    } else if (candidate.ats_score > 60) {
-        reason.push("Good overall match");
-    } else {
-        reason.push("Partial match but potential");
-    }
+    if ((candidate.ats_score || 0) > 80) reason.push("High ATS score");
+    else if ((candidate.ats_score || 0) > 60) reason.push("Good match");
+    else reason.push("Partial match");
 
-    if (missing.length === 0) {
-        reason.push("No major skill gaps");
-    }
+    if (missing === 0) reason.push("No skill gaps");
 
     return reason.join(" • ");
 }
 
 
-// ======================================================
-// RENDER RESULTS (UPGRADED)
-// ======================================================
-
+// ==============================
+// MATCH RESULTS
+// ==============================
 function renderMatchResults(data) {
 
     const candidates = safeArray(data.top_candidates);
@@ -295,23 +277,17 @@ function renderMatchResults(data) {
     }
 
     matchResults.innerHTML = `
-
         <div class="jd-skills-box">
             <h2>JD Skills</h2>
-
             <div class="skill-tags">
                 ${jdSkills.map(s => `<span class="skill-tag">${s}</span>`).join("")}
             </div>
         </div>
 
         <div class="candidate-grid">
-
             ${candidates.map((c, i) => `
                 <div class="candidate-card">
-
-                    <div class="candidate-rank">
-                        #${i + 1}
-                    </div>
+                    <div class="candidate-rank">#${i + 1}</div>
 
                     <h2>${c.name || "Unknown"}</h2>
 
@@ -321,53 +297,47 @@ function renderMatchResults(data) {
 
                     <p><b>Email:</b> ${c.email || "N/A"}</p>
                     <p><b>Phone:</b> ${c.phone || "N/A"}</p>
-
                     <p><b>File:</b> ${c.filename || "N/A"}</p>
 
-                    <!-- 🔥 WHY SELECTED -->
                     <div class="why-box">
                         <b>Why Selected:</b>
-                        <p>${generateWhySelected(c, jdSkills)}</p>
+                        <p>${generateWhySelected(c)}</p>
                     </div>
 
                     <div class="match-section">
                         <h3>Matched Skills</h3>
                         <div class="skill-tags">
-                            ${safeArray(c.matched_skills).map(s =>
-                                `<span class="matched-skill">${s}</span>`
-                            ).join("")}
+                            ${safeArray(c.matched_skills).map(s => `<span class="matched-skill">${s}</span>`).join("")}
                         </div>
                     </div>
 
                     <div class="match-section">
                         <h3>Missing Skills</h3>
                         <div class="skill-tags">
-                            ${safeArray(c.missing_skills).map(s =>
-                                `<span class="missing-skill">${s}</span>`
-                            ).join("")}
+                            ${safeArray(c.missing_skills).map(s => `<span class="missing-skill">${s}</span>`).join("")}
                         </div>
                     </div>
 
                 </div>
             `).join("")}
-
         </div>
     `;
 }
 
 
-// ======================================================
+// ==============================
 // EVENTS
-// ======================================================
-
+// ==============================
 uploadButton.addEventListener("click", uploadFiles);
 downloadButton.addEventListener("click", downloadExcel);
 analyzeButton.addEventListener("click", analyzeJobDescription);
-fileInput.addEventListener("change", () => setStatus("Files selected"));
+
+fileInput.addEventListener("change", () =>
+    setStatus("Files selected")
+);
 
 
-// ======================================================
+// ==============================
 // INIT
-// ======================================================
-
+// ==============================
 loadResumes();
