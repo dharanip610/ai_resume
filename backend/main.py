@@ -9,8 +9,11 @@ from pydantic import BaseModel
 from backend.parser import extract_resume_data
 from backend.supabase_client import insert_data, load_data
 from backend.excel_export import generate_excel
-from backend.jd_analyzer import analyze_candidates   # 🔥 FIX ADDED
+from backend.jd_analyzer import analyze_candidates
 
+# =========================
+# APP
+# =========================
 app = FastAPI(title="AI Resume System")
 
 # =========================
@@ -35,7 +38,6 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 class JDRequest(BaseModel):
     job_description: str
 
-
 # =========================
 # CLEAN FUNCTION
 # =========================
@@ -44,14 +46,12 @@ def clean_text(value):
         return ""
     return str(value).replace("\x00", "").replace("\u0000", "")
 
-
 # =========================
 # HOME
 # =========================
 @app.get("/")
 def home():
     return {"status": "AI Resume Backend Running 🚀"}
-
 
 # =========================
 # UPLOAD RESUME
@@ -65,10 +65,8 @@ async def upload(file: UploadFile = File(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # parse resume
         data = extract_resume_data(str(file_path))
 
-        # clean + safe insert
         data = {
             "name": clean_text(data.get("name")),
             "email": clean_text(data.get("email")),
@@ -87,7 +85,6 @@ async def upload(file: UploadFile = File(...)):
         print("UPLOAD ERROR:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # =========================
 # GET RESUMES
 # =========================
@@ -96,19 +93,14 @@ def resumes():
 
     try:
         data = load_data()
-
-        if not data:
-            return {"data": []}
-
-        return {"data": data}
+        return {"data": data or []}
 
     except Exception as e:
         print("RESUME ERROR:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # =========================
-# 🔥 ANALYZE JD (FIXED + ADDED)
+# ANALYZE JD
 # =========================
 @app.post("/analyze-jd")
 def analyze(payload: JDRequest):
@@ -117,20 +109,13 @@ def analyze(payload: JDRequest):
         resumes = load_data()
 
         if not resumes:
-            return {
-                "message": "No resumes found",
-                "jd_skills": [],
-                "top_candidates": []
-            }
+            return {"jd_skills": [], "top_candidates": []}
 
-        result = analyze_candidates(resumes, payload.job_description)
-
-        return result
+        return analyze_candidates(resumes, payload.job_description)
 
     except Exception as e:
         print("ANALYZE ERROR:", e)
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # =========================
 # EXPORT EXCEL
