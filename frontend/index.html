@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>AI Resume HR Dashboard</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+
+    <!-- ===================================================== -->
+    <!-- MAIN CONTAINER -->
+    <!-- ===================================================== -->
+
+    <div class="container">
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
+        <div class="header">
+
+            <h1>
+                AI Resume HR Dashboard
+            </h1>
+
+            <p>
+                Upload resumes, analyze job descriptions,
+                and find top matching candidates using AI.
+            </p>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CONTROLS -->
+        <!-- ================================================= -->
+
+        <div class="controls">
+
+            <input
+                type="file"
+                id="fileInput"
+                multiple
+            />
+
+            <button id="uploadButton">
+                Upload Resumes
+            </button>
+
+            <button id="downloadButton">
+                Download Excel
+            </button>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- STATUS -->
+        <!-- ================================================= -->
+
+        <div id="statusBox" class="status">
+
+            System loading...
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- DASHBOARD CARDS -->
+        <!-- ================================================= -->
+
+        <div class="cards">
+
+            <div class="card" id="totalCard">
+                Total Uploads: 0
+            </div>
+
+            <div class="card" id="parsedCard">
+                Parsed: 0
+            </div>
+
+            <div class="card" id="failedCard">
+                Failed: 0
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- JOB DESCRIPTION SECTION -->
+        <!-- ================================================= -->
+
+        <div class="jd-section">
+
+            <h2>
+                Job Description AI Matching
+            </h2>
+
+            <p>
+                Paste a job description below and
+                AI will find the top matching candidates.
+            </p>
+
+            <textarea
+                id="jdInput"
+                placeholder="Example:
+Need a Python developer with FastAPI, React, SQL, AWS and Docker experience..."
+            ></textarea>
+
+            <button id="analyzeButton">
+                Analyze Candidates
+            </button>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- AI MATCH RESULTS -->
+        <!-- ================================================= -->
+
+        <div id="matchResults" class="match-results">
+
+            <div class="result-placeholder">
+
+                AI candidate matching results
+                will appear here...
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- RESUME LIST -->
+        <!-- ================================================= -->
+
+        <div class="resume-section">
+
+            <h2>
+                Uploaded Resumes
+            </h2>
+
+            <div id="resumeList" class="resume-list"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- SCRIPT -->
+    <!-- ===================================================== -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
