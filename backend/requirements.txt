@@ -5,3 +5,5 @@ supabase
 pandas
 openpyxl
 python-dotenv
+pdfplumber
+python-docx
