@@ -25,9 +25,8 @@ LOW = [
 
 MASTER = HIGH + MEDIUM + LOW
 
-
 # =========================
-# SAFE JD SKILL EXTRACTION
+# JD SKILL EXTRACTION
 # =========================
 
 def extract_skills(text):
@@ -44,14 +43,12 @@ def extract_skills(text):
         pattern = r'\b' + re.escape(skill) + r'\b'
 
         if re.search(pattern, text):
-
             found.append(skill)
 
-    return found
-
+    return list(set(found))
 
 # =========================
-# SAFE RESUME SKILLS PARSER
+# RESUME SKILLS PARSER
 # =========================
 
 def parse_skills(skills):
@@ -59,7 +56,6 @@ def parse_skills(skills):
     if not skills:
         return []
 
-    # already list
     if isinstance(skills, list):
 
         return [
@@ -67,25 +63,23 @@ def parse_skills(skills):
             for s in skills
         ]
 
-    # comma string
     return [
         s.strip().lower()
         for s in str(skills).split(",")
         if s.strip()
     ]
 
-
 # =========================
 # ATS CALCULATION
 # =========================
 
-def calculate(jd, resume):
+def calculate(jd_skills, resume_skills):
 
-    jd_set = set(jd)
-    res_set = set(resume)
+    jd_set = set(jd_skills)
+    resume_set = set(resume_skills)
 
-    matched = list(jd_set & res_set)
-    missing = list(jd_set - res_set)
+    matched = list(jd_set & resume_set)
+    missing = list(jd_set - resume_set)
 
     score = 0
 
@@ -102,13 +96,12 @@ def calculate(jd, resume):
 
     max_score = len(jd_set) * 10 if jd_set else 1
 
-    ats = int((score / max_score) * 100)
+    ats_score = int((score / max_score) * 100)
 
-    return ats, matched, missing
-
+    return ats_score, matched, missing
 
 # =========================
-# MAIN FUNCTION
+# MAIN ANALYZER
 # =========================
 
 def analyze_candidates(resumes, jd_text):
@@ -123,32 +116,52 @@ def analyze_candidates(resumes, jd_text):
             r.get("skills")
         )
 
-        ats, matched, missing = calculate(
+        ats_score, matched, missing = calculate(
             jd_skills,
             resume_skills
         )
 
-        results.append({
+        candidate = {
 
             "name": r.get("name", ""),
+
             "email": r.get("email", ""),
+
             "phone": r.get("phone", ""),
-            "address": r.get("address", ""),
+
             "filename": r.get("filename", ""),
 
-            "ats_score": ats,
+            "ats_score": ats_score,
+
+            "resume_skills": resume_skills,
 
             "matched_skills": matched,
-            "missing_skills": missing
-        })
 
-    # TOP ATS
-    results.sort(
+            "missing_skills": missing
+        }
+
+        results.append(candidate)
+
+    # Only shortlisted candidates
+    qualified = [
+
+        r for r in results
+
+        if r["ats_score"] >= 50
+    ]
+
+    qualified.sort(
         key=lambda x: x["ats_score"],
         reverse=True
     )
 
     return {
+
         "jd_skills": jd_skills,
-        "top_candidates": results[:5]
+
+        "total_candidates": len(results),
+
+        "shortlisted_candidates": len(qualified),
+
+        "top_candidates": qualified[:5]
     }
