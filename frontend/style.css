@@ -1,20 +1,218 @@
 /* ===================================================== */
-/* GLOBAL */
+/* GLOBAL RESET */
 /* ===================================================== */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #0f172a;
     color: #f8fafc;
     min-height: 100vh;
+    line-height: 1.5;
 }
 
+/* ===================================================== */
+/* LINKS */
+/* ===================================================== */
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ===================================================== */
+/* NAVBAR */
+/* ===================================================== */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 8%;
+    background: #111827;
+    border-bottom: 1px solid #334155;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #38bdf8;
+}
+
+.navbar nav {
+    display: flex;
+    gap: 18px;
+}
+
+.navbar a {
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #38bdf8;
+}
+
+/* ===================================================== */
+/* HERO */
+/* ===================================================== */
+
+.hero {
+    text-align: center;
+    padding: 90px 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 18px;
+}
+
+.hero p {
+    color: #cbd5e1;
+    max-width: 700px;
+    margin: auto;
+}
+
+.hero-buttons {
+    margin-top: 25px;
+}
+
+.btn {
+    display: inline-block;
+    background: #3b82f6;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    margin: 10px;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background: #2563eb;
+}
+
+/* ===================================================== */
+/* FEATURES */
+/* ===================================================== */
+
+.features {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 60px 0;
+}
+
+.features h2 {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.feature-card {
+    background: #1e293b;
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    border-color: #38bdf8;
+}
+
+.feature-card h3 {
+    color: #38bdf8;
+    margin-bottom: 10px;
+}
+
+/* ===================================================== */
+/* WORKFLOW */
+/* ===================================================== */
+
+.workflow {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+}
+
+.step {
+    background: #1e293b;
+    padding: 12px 20px;
+    border-radius: 999px;
+    border: 1px solid #334155;
+}
+
+/* ===================================================== */
+/* LOGIN */
+/* ===================================================== */
+
+.login-container {
+    width: 420px;
+    max-width: 95%;
+    margin: 80px auto;
+    padding: 40px;
+    background: #1e293b;
+    border-radius: 18px;
+    border: 1px solid #334155;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.login-container h1 {
+    color: #38bdf8;
+    margin-bottom: 10px;
+}
+
+.login-container p {
+    color: #94a3b8;
+    margin-bottom: 20px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+.login-container button:hover {
+    background: #2563eb;
+}
 
 /* ===================================================== */
 /* CONTAINER */
@@ -27,27 +225,19 @@ body {
     padding: 30px 20px 60px;
 }
 
-
 /* ===================================================== */
 /* HEADER */
 /* ===================================================== */
 
 .header {
     text-align: center;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .header h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
     color: #38bdf8;
+    margin-bottom: 8px;
 }
-
-.header p {
-    color: #cbd5e1;
-    font-size: 16px;
-}
-
 
 /* ===================================================== */
 /* CONTROLS */
@@ -57,66 +247,69 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 14px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 25px;
 }
 
-input[type="file"] {
-    background: #1e293b;
+/* ===================================================== */
+/* INPUTS */
+/* ===================================================== */
+
+input,
+textarea,
+select {
+    width: 100%;
     padding: 12px;
     border-radius: 10px;
     border: 1px solid #334155;
+    background: #111827;
     color: white;
 }
 
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #38bdf8;
+    outline: none;
+}
 
 /* ===================================================== */
 /* BUTTONS */
 /* ===================================================== */
 
 button {
-    background: #38bdf8;
-    color: #082f49;
+    background: #3b82f6;
+    color: white;
     border: none;
-    padding: 12px 22px;
+    padding: 12px 18px;
     border-radius: 10px;
-    font-size: 15px;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
 }
 
 button:hover {
-    transform: translateY(-2px);
-    opacity: 0.95;
+    background: #2563eb;
 }
-
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
 
 /* ===================================================== */
 /* STATUS */
 /* ===================================================== */
 
 .status {
-    padding: 14px;
-    border-radius: 12px;
-    margin-bottom: 24px;
     background: #1e293b;
+    padding: 14px;
+    border-radius: 10px;
     border: 1px solid #334155;
+    margin-bottom: 20px;
 }
 
 .status.success {
-    color: #86efac;
+    color: #22c55e;
 }
 
 .status.error {
-    color: #fca5a5;
+    color: #ef4444;
 }
-
 
 /* ===================================================== */
 /* DASHBOARD CARDS */
@@ -125,275 +318,281 @@ button:disabled {
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-bottom: 35px;
+    gap: 18px;
+    margin-bottom: 30px;
 }
 
 .card {
     background: #1e293b;
-    padding: 28px;
-    border-radius: 16px;
-    text-align: center;
     border: 1px solid #334155;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-
-/* ===================================================== */
-/* JD SECTION */
-/* ===================================================== */
-
-.jd-section {
-    background: #111827;
-    border-radius: 18px;
     padding: 24px;
-    margin-bottom: 30px;
-    border: 1px solid #334155;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
-.jd-section h2 {
-    margin-bottom: 10px;
-    color: #38bdf8;
-}
-
-.jd-section p {
-    color: #cbd5e1;
-    margin-bottom: 16px;
-}
-
-#jdInput {
-    width: 100%;
-    min-height: 180px;
-    background: #0f172a;
-    color: white;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    padding: 16px;
-    font-size: 15px;
-    resize: vertical;
-    margin-bottom: 18px;
-    outline: none;
-}
-
-#jdInput:focus {
+.card:hover {
+    transform: translateY(-4px);
     border-color: #38bdf8;
 }
 
-
 /* ===================================================== */
-/* MATCH RESULTS */
+/* TABLE */
 /* ===================================================== */
 
-.match-results {
-    margin-bottom: 40px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-.result-placeholder,
-.result-empty {
+th {
     background: #111827;
-    padding: 30px;
-    border-radius: 16px;
-    text-align: center;
-    color: #94a3b8;
-    border: 1px solid #334155;
+    padding: 12px;
+    text-align: left;
 }
 
-
-/* ===================================================== */
-/* JD SKILLS */
-/* ===================================================== */
-
-.jd-skills-box {
-    background: #111827;
-    border-radius: 18px;
-    padding: 24px;
-    margin-bottom: 25px;
-    border: 1px solid #334155;
+td {
+    padding: 12px;
+    border-top: 1px solid #334155;
 }
-
-.jd-skills-box h2 {
-    margin-bottom: 18px;
-    color: #38bdf8;
-}
-
-
-/* ===================================================== */
-/* SKILLS */
-/* ===================================================== */
-
-.skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.skill-tag,
-.matched-skill,
-.missing-skill {
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.skill-tag {
-    background: #1d4ed8;
-}
-
-.matched-skill {
-    background: #166534;
-}
-
-.missing-skill {
-    background: #991b1b;
-}
-
-
-/* ===================================================== */
-/* CANDIDATE GRID */
-/* ===================================================== */
-
-.candidate-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 22px;
-}
-
 
 /* ===================================================== */
 /* CANDIDATE CARD */
 /* ===================================================== */
 
 .candidate-card {
-    background: #111827;
-    border-radius: 18px;
-    padding: 24px;
+    background: #1e293b;
     border: 1px solid #334155;
-    transition: 0.2s;
+    border-radius: 16px;
+    padding: 18px;
 }
 
 .candidate-card:hover {
-    transform: translateY(-4px);
+    border-color: #38bdf8;
 }
 
-.candidate-rank {
-    display: inline-block;
-    background: #2563eb;
-    padding: 8px 14px;
+/* ===================================================== */
+/* STATUS BADGES */
+/* ===================================================== */
+
+.status-new {
+    background: #38bdf8;
+    color: black;
+    padding: 4px 10px;
     border-radius: 999px;
-    margin-bottom: 18px;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
 }
 
-.candidate-card h2 {
-    margin-bottom: 14px;
-    color: #f8fafc;
+.status-selected {
+    background: #22c55e;
+    color: black;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
 }
 
-.candidate-card p {
-    margin-bottom: 10px;
-    color: #cbd5e1;
+.status-rejected {
+    background: #ef4444;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
 }
 
+.status-hold {
+    background: #f59e0b;
+    color: black;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+}
 
 /* ===================================================== */
-/* ATS SCORE */
+/* FOOTER */
 /* ===================================================== */
 
-.ats-score {
-    background: #14532d;
-    color: #86efac;
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 18px;
+footer {
     text-align: center;
+    padding: 25px;
+    color: #94a3b8;
 }
-
-
-/* ===================================================== */
-/* MATCH SECTIONS */
-/* ===================================================== */
-
-.match-section {
-    margin-top: 20px;
-}
-
-.match-section h3 {
-    margin-bottom: 10px;
-    color: #38bdf8;
-}
-
-
-/* ===================================================== */
-/* RESUME SECTION */
-/* ===================================================== */
-
-.resume-section {
-    margin-top: 50px;
-}
-
-.resume-section h2 {
-    margin-bottom: 24px;
-    color: #38bdf8;
-}
-
-
-/* ===================================================== */
-/* RESUME LIST */
-/* ===================================================== */
-
-.resume-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.resume-item {
-    background: #111827;
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid #334155;
-}
-
-.resume-item h3 {
-    margin-bottom: 14px;
-    color: #38bdf8;
-}
-
-.resume-item p {
-    margin-bottom: 10px;
-    color: #cbd5e1;
-}
-
 
 /* ===================================================== */
 /* RESPONSIVE */
 /* ===================================================== */
 
 @media (max-width: 768px) {
-
-    .header h1 {
-        font-size: 30px;
-    }
-
-    .controls {
+    .navbar {
         flex-direction: column;
-        align-items: stretch;
+        gap: 12px;
     }
 
-    button {
-        width: 100%;
+    .hero h1 {
+        font-size: 32px;
     }
 
     .cards {
         grid-template-columns: 1fr;
     }
 
-    .candidate-grid {
+    .feature-grid {
         grid-template-columns: 1fr;
     }
 }
+.upload-box {
+background: white;
+padding: 30px;
+border-radius: 12px;
+max-width: 600px;
+margin: 30px auto;
+text-align: center;
+}
+
+.upload-box input {
+margin-top: 15px;
+margin-bottom: 25px;
+}
+
+.upload-box button {
+padding: 12px 24px;
+cursor: pointer;
+}
+
+#uploadStatus {
+font-weight: bold;
+margin-bottom: 15px;
+}
+/* Container */
+#resumeContainer {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+/* Resume Card */
+.resume-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+
+    padding: 15px 20px;
+    margin-bottom: 12px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+    transition: 0.2s ease-in-out;
+}
+
+.resume-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* File name */
+.resume-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Download button */
+.download-btn {
+    padding: 8px 14px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.download-btn:hover {
+    background: #3730a3;
+}
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f6f9;
+}
+
+nav {
+    background: #111827;
+    padding: 12px;
+}
+
+nav a {
+    color: white;
+    margin-right: 15px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: #38bdf8;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    flex-wrap: wrap;
+}
+
+input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgb(32, 29, 29);
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    background: #111827;
+    color: white;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: white;
+}
+
+.New { background: #3b82f6; }
+.Contacted { background: #8b5cf6; }
+.InterviewScheduled { background: #f59e0b; }
+.Selected { background: #22c55e; }
+.Rejected { background: #ef4444; }
+.OnHold { background: #6b7280; }

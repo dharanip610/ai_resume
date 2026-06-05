@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Panel - ATS</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<div class="navbar">
+
+    <div class="logo">ATS Admin Panel</div>
+
+    <nav>
+        <a href="admin.html">Admin</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="candidates.html">Candidates</a>
+        <a href="login.html">Logout</a>
+    </nav>
+
+</div>
+
+<!-- ================= CONTAINER ================= -->
+<div class="container">
+
+    <div class="header">
+        <h1>System Administration</h1>
+        <p>Manage HR users and monitor ATS system</p>
+    </div>
+
+    <!-- ================= STATS ================= -->
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total HR Users</h3>
+            <h2 id="hrCount">0</h2>
+        </div>
+
+        <div class="card">
+            <h3>Total Resumes</h3>
+            <h2 id="resumeCount">0</h2>
+        </div>
+
+        <div class="card">
+            <h3>Active Today</h3>
+            <h2 id="activeCount">0</h2>
+        </div>
+
+    </div>
+
+    <!-- ================= CREATE HR ================= -->
+    <div class="login-container">
+
+        <h2>Create HR User</h2>
+
+        <input type="email" id="hrEmail" placeholder="HR Email">
+        <input type="password" id="hrPassword" placeholder="Password">
+
+        <button onclick="createHR()">
+            Create HR
+        </button>
+
+        <p id="adminMsg"></p>
+
+    </div>
+
+    <!-- ================= HR LIST ================= -->
+    <h2 style="margin-top:40px;">HR Users</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="hrTable"></tbody>
+
+    </table>
+
+</div>
+
+<script src="admin.js"></script>
+
+</body>
+</html>

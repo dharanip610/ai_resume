@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Login - AI Resume ATS</title>
+
+```
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #0f172a, #2563eb);
+    }
+
+    .login-box {
+        width: 400px;
+        background: white;
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        text-align: center;
+    }
+
+    h1 {
+        color: #2563eb;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #2563eb;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+
+    #msg {
+        margin-top: 15px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .icon {
+        font-size: 50px;
+        margin-bottom: 10px;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<div class="login-box">
+
+    <div class="icon">📄</div>
+
+    <h1>AI Resume ATS</h1>
+
+    <p class="subtitle">
+        HR Login Portal
+    </p>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Enter Email">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Enter Password">
+
+    <button id="loginBtn">
+        Login
+    </button>
+
+    <div id="msg"></div>
+
+</div>
+
+<script>
+
+    const supabaseClient = window.supabase.createClient(
+        "https://tyznmenzpxstbgyqeppt.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5em5tZW56cHhzdGJneXFlcHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NzY4NzYsImV4cCI6MjA5NTM1Mjg3Nn0.afpxfRoVezm78D6WG_vOn7w1PVa7lcBZKnYMM479m-0"
+    );
+
+    async function login() {
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const msg =
+            document.getElementById("msg");
+
+        if (!email || !password) {
+
+            msg.style.color = "red";
+            msg.innerText =
+                "Please enter email and password";
+
+            return;
+        }
+
+        msg.style.color = "#2563eb";
+        msg.innerText = "Logging in...";
+
+        try {
+
+            const { data, error } =
+                await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+            if (error) {
+
+                msg.style.color = "red";
+                msg.innerText = error.message;
+                return;
+            }
+
+            localStorage.setItem(
+                "access_token",
+                data.session.access_token
+            );
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
+
+            msg.style.color = "green";
+            msg.innerText =
+                "Login Success 🚀";
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }, 1000);
+
+        } catch (err) {
+
+            console.error(err);
+
+            msg.style.color = "red";
+            msg.innerText =
+                "Server Error";
+
+        }
+    }
+
+    document
+        .getElementById("loginBtn")
+        .addEventListener("click", login);
+
+</script>
+```
+
+</body>
+
+</html>

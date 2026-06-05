@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candidates</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="upload.html">Upload</a>
+    <a href="candidates.html">Candidates</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<!-- SEARCH -->
+<div class="controls">
+
+    <input type="text" id="searchInput" placeholder="Search by name, email, skills...">
+
+    <select id="statusFilter">
+        <option value="">All Status</option>
+        <option value="New">New</option>
+        <option value="Contacted">Contacted</option>
+        <option value="Interview Scheduled">Interview Scheduled</option>
+        <option value="Selected">Selected</option>
+        <option value="Rejected">Rejected</option>
+        <option value="On Hold">On Hold</option>
+    </select>
+
+    <button onclick="loadCandidates()">Refresh</button>
+
+</div>
+
+<!-- TABLE -->
+<table>
+
+    <thead>
+<tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>College</th>
+    <th>Skills</th>
+    <th>ATS Score</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+</thead>
+
+    <tbody id="candidateTable"></tbody>
+
+</table>
+
+<script src="app.js"></script>
+
+</body>
+</html>

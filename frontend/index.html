@@ -1,169 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <meta charset="UTF-8" />
+    <title>AI Resume Scanner ATS</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
-
-    <title>AI Resume HR Dashboard</title>
-
-    <link rel="stylesheet" href="style.css" />
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- ===================================================== -->
-    <!-- MAIN CONTAINER -->
-    <!-- ===================================================== -->
+    <!-- HEADER -->
 
-    <div class="container">
+    <header class="navbar">
 
-        <!-- ================================================= -->
-        <!-- HEADER -->
-        <!-- ================================================= -->
+        <div class="logo">
+            AI Resume Scanner ATS
+        </div>
 
-        <div class="header">
+        <nav>
 
-            <h1>
-                AI Resume HR Dashboard
-            </h1>
+            <a href="login.html">Login</a>
 
-            <p>
-                Upload resumes, analyze job descriptions,
-                and find top matching candidates using AI.
-            </p>
+            <a href="dashboard.html">Dashboard</a>
+
+            <a href="upload.html">Upload Resume</a>
+
+            <a href="candidates.html">Candidates</a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- HERO SECTION -->
+
+    <section class="hero">
+
+        <h1>
+            Smart Recruitment Platform
+        </h1>
+
+        <p>
+            Upload resumes, parse candidate details,
+            manage hiring workflow and track recruitment
+            using AI-powered ATS.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="login.html" class="btn">
+                Login
+            </a>
+
+            <a href="upload.html" class="btn">
+                Upload Resume
+            </a>
 
         </div>
 
-
-        <!-- ================================================= -->
-        <!-- CONTROLS -->
-        <!-- ================================================= -->
-
-        <div class="controls">
-
-            <input
-                type="file"
-                id="fileInput"
-                multiple
-            />
-
-            <button id="uploadButton">
-                Upload Resumes
-            </button>
-
-            <button id="downloadButton">
-                Download Excel
-            </button>
-
-        </div>
+    </section>
 
 
-        <!-- ================================================= -->
-        <!-- STATUS -->
-        <!-- ================================================= -->
+    <!-- FEATURES -->
 
-        <div id="statusBox" class="status">
+    <section class="features">
 
-            System loading...
+        <h2>
+            Platform Features
+        </h2>
 
-        </div>
+        <div class="feature-grid">
 
-
-        <!-- ================================================= -->
-        <!-- DASHBOARD CARDS -->
-        <!-- ================================================= -->
-
-        <div class="cards">
-
-            <div class="card" id="totalCard">
-                Total Uploads: 0
+            <div class="feature-card">
+                <h3>Resume Upload</h3>
+                <p>Upload PDF, DOC and DOCX resumes.</p>
             </div>
 
-            <div class="card" id="parsedCard">
-                Parsed: 0
+            <div class="feature-card">
+                <h3>AI Parsing</h3>
+                <p>Extract candidate details automatically.</p>
             </div>
 
-            <div class="card" id="failedCard">
-                Failed: 0
+            <div class="feature-card">
+                <h3>Candidate Tracking</h3>
+                <p>Track hiring status and recruitment stages.</p>
             </div>
 
-        </div>
+            <div class="feature-card">
+                <h3>Dashboard</h3>
+                <p>View recruitment statistics and reports.</p>
+            </div>
 
+            <div class="feature-card">
+                <h3>Search & Filter</h3>
+                <p>Find candidates quickly using filters.</p>
+            </div>
 
-        <!-- ================================================= -->
-        <!-- JOB DESCRIPTION SECTION -->
-        <!-- ================================================= -->
-
-        <div class="jd-section">
-
-            <h2>
-                Job Description AI Matching
-            </h2>
-
-            <p>
-                Paste a job description below and
-                AI will find the top matching candidates.
-            </p>
-
-            <textarea
-                id="jdInput"
-                placeholder="Example:
-Need a Python developer with FastAPI, React, SQL, AWS and Docker experience..."
-            ></textarea>
-
-            <button id="analyzeButton">
-                Analyze Candidates
-            </button>
-
-        </div>
-
-
-        <!-- ================================================= -->
-        <!-- AI MATCH RESULTS -->
-        <!-- ================================================= -->
-
-        <div id="matchResults" class="match-results">
-
-            <div class="result-placeholder">
-
-                AI candidate matching results
-                will appear here...
-
+            <div class="feature-card">
+                <h3>Export Data</h3>
+                <p>Export candidate records to Excel and CSV.</p>
             </div>
 
         </div>
 
+    </section>
 
-        <!-- ================================================= -->
-        <!-- RESUME LIST -->
-        <!-- ================================================= -->
 
-        <div class="resume-section">
+    <!-- WORKFLOW -->
 
-            <h2>
-                Uploaded Resumes
-            </h2>
+    <section class="workflow">
 
-            <div id="resumeList" class="resume-list"></div>
+        <h2>
+            Recruitment Workflow
+        </h2>
+
+        <div class="steps">
+
+            <div class="step">Login</div>
+
+            <div class="step">Upload Resume</div>
+
+            <div class="step">Parse Resume</div>
+
+            <div class="step">Track Candidate</div>
+
+            <div class="step">Export Data</div>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <!-- ===================================================== -->
-    <!-- SCRIPT -->
-    <!-- ===================================================== -->
+    <!-- FOOTER -->
 
-    <script src="app.js"></script>
+    <footer>
+
+        <p>
+            © 2026 AI Resume Scanner ATS
+        </p>
+
+    </footer>
 
 </body>
-
 </html>
+```
