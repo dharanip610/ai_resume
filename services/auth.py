@@ -6,6 +6,8 @@ def get_current_user(
     authorization: str = Header(None)
 ):
 
+    print("AUTH HEADER =", authorization)
+
     if not authorization:
         raise HTTPException(
             status_code=401,
@@ -19,9 +21,9 @@ def get_current_user(
 
     try:
 
-        user = supabase.auth.get_user(
-            token
-        )
+        user = supabase.auth.get_user(token)
+
+        print("USER RESPONSE =", user)
 
         if not user or not user.user:
 
@@ -32,7 +34,9 @@ def get_current_user(
 
         return user.user
 
-    except Exception:
+    except Exception as e:
+
+        print("AUTH ERROR =", str(e))
 
         raise HTTPException(
             status_code=401,
