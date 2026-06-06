@@ -1,0 +1,8 @@
+TODO BEFORE DEPLOYMENT
+
+- Re-enable get_user auth
+- Re-enable hr_id filtering
+- Enable RLS policies
+- Secure Supabase Storage
+- Admin role checks
+- Token validation

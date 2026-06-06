@@ -7,7 +7,21 @@ async function loadAdminData() {
 
     try {
 
-        const res = await fetch(`${API_BASE}/admin/stats`);
+       const token =
+    localStorage.getItem(
+        "access_token"
+    );
+
+const res = await fetch(
+    `${API_BASE}/admin/stats`,
+    {
+        headers: {
+            "Authorization":
+                "Bearer " + token
+        }
+    }
+);
+
         const data = await res.json();
 
         document.getElementById("hrCount").innerText = data.hr_count || 0;
@@ -28,7 +42,20 @@ async function loadHRUsers() {
 
     try {
 
-        const res = await fetch(`${API_BASE}/admin/hr-users`);
+       const token =
+    localStorage.getItem(
+        "access_token"
+    );
+
+const res = await fetch(
+    `${API_BASE}/admin/hr-users`,
+    {
+        headers: {
+            "Authorization":
+                "Bearer " + token
+        }
+    }
+);
         const data = await res.json();
 
         const users = data.data || [];

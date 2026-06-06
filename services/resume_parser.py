@@ -164,33 +164,75 @@ def extract_resume_data(file_path):
 # ATS SCORE
 # =========================
 
-def calculate_ats_score(resume_text, jd_text):
+import re
 
-    score = 0
+def calculate_ats_score(resume_text, jd_text):
 
     resume_text = (resume_text or "").lower()
     jd_text = (jd_text or "").lower()
 
-    jd_words = set(jd_text.split())
-    resume_words = set(resume_text.split())
+    # Remove commas, dots, special chars
+    resume_text = re.sub(
+        r"[^a-z0-9\s]",
+        " ",
+        resume_text
+    )
 
-    matched = jd_words.intersection(resume_words)
+    jd_text = re.sub(
+        r"[^a-z0-9\s]",
+        " ",
+        jd_text
+    )
 
+    jd_words = set(
+        word.strip()
+        for word in jd_text.split()
+        if word.strip()
+    )
+
+    resume_words = set(
+        word.strip()
+        for word in resume_text.split()
+        if word.strip()
+    )
+
+    matched_keywords = list(
+        jd_words.intersection(resume_words)
+    )
+
+    missing_keywords = list(
+        jd_words - resume_words
+    )
+
+    score = 0
+
+    # Keyword Match Score (60%)
     if jd_words:
         score += int(
-            (len(matched) / len(jd_words)) * 60
+            (
+                len(matched_keywords)
+                / len(jd_words)
+            ) * 60
         )
 
+    # Experience Bonus
     if "experience" in resume_text:
         score += 20
 
+    # Education Bonus
     if (
         "degree" in resume_text
         or "bachelor" in resume_text
         or "college" in resume_text
+        or "university" in resume_text
     ):
         score += 10
 
+    # Base Score
     score += 10
 
-    return min(score, 100)
+    return {
+        "score": min(score, 100),
+        "matched_keywords": matched_keywords,
+        "missing_keywords": missing_keywords
+    }

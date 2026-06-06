@@ -1,88 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HR Dashboard - AI ATS</title>
+    <title>AI Resume ATS Dashboard</title>
     <link rel="stylesheet" href="style.css">
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #f4f6f9;
+        body{
+            margin:0;
+            font-family:'Segoe UI',sans-serif;
+            background:#0f172a;
+            color:white;
         }
 
-        .topbar {
-            background: #111827;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 20px;
-            align-items: center;
+        .topbar{
+            background:#111827;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:18px 30px;
+            border-bottom:1px solid #1e293b;
         }
 
-        .logo {
-            font-size: 18px;
-            font-weight: bold;
+        .logo{
+            font-size:22px;
+            font-weight:700;
         }
 
-        nav a {
-            color: white;
-            margin-left: 15px;
-            text-decoration: none;
+        nav a{
+            color:#e5e7eb;
+            text-decoration:none;
+            margin-left:20px;
+            transition:0.3s;
         }
 
-        nav a:hover {
-            color: #38bdf8;
+        nav a:hover{
+            color:#38bdf8;
         }
 
-        .header {
-            padding: 20px;
+        .header{
+            padding:30px;
         }
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            padding: 20px;
+        .header h1{
+            margin:0;
+            font-size:34px;
         }
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
+        .header p{
+            color:#94a3b8;
         }
 
-        .card h2 {
-            margin: 0;
-            font-size: 28px;
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:20px;
+            padding:0 30px 30px;
         }
 
-        .section {
-            margin: 20px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
+        .card{
+            background:#1e293b;
+            padding:25px;
+            border-radius:16px;
+            box-shadow:0 8px 20px rgba(0,0,0,.25);
+            transition:.3s;
         }
 
-        button {
-            padding: 10px 15px;
-            margin-right: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            background: #2563eb;
-            color: white;
+        .card:hover{
+            transform:translateY(-4px);
         }
 
-        button:hover {
-            background: #1d4ed8;
+        .card h3{
+            margin:0;
+            color:#cbd5e1;
+            font-size:14px;
         }
 
-        @media(max-width: 768px){
-            .cards {
-                grid-template-columns: 1fr 1fr;
+        .card h2{
+            margin-top:15px;
+            font-size:34px;
+        }
+
+        .section{
+            background:#1e293b;
+            margin:0 30px 30px;
+            padding:25px;
+            border-radius:16px;
+        }
+
+        .section h2{
+            margin-top:0;
+        }
+
+        .actions{
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+        }
+
+        .action-btn{
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:12px 20px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:600;
+            transition:.3s;
+        }
+
+        .action-btn:hover{
+            background:#1d4ed8;
+        }
+
+        .total{ color:#38bdf8; }
+        .new{ color:#facc15; }
+        .selected{ color:#22c55e; }
+        .rejected{ color:#ef4444; }
+
+        @media(max-width:900px){
+            .cards{
+                grid-template-columns:1fr 1fr;
+            }
+
+            .topbar{
+                flex-direction:column;
+                gap:10px;
+            }
+        }
+
+        @media(max-width:600px){
+            .cards{
+                grid-template-columns:1fr;
+            }
+
+            nav{
+                display:flex;
+                flex-wrap:wrap;
+                justify-content:center;
             }
         }
     </style>
@@ -90,95 +144,197 @@
 
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
-    <div class="logo">🧠 AI Resume ATS</div>
+
+    <div class="logo">
+        🧠 AI Resume ATS
+    </div>
 
     <nav>
         <a href="dashboard.html">Dashboard</a>
-        <a href="upload.html">Upload Resume</a>
+        <a href="upload.html">Upload</a>
         <a href="candidates.html">Candidates</a>
+        <a href="analyze-jd.html">JD Analyzer</a>
         <a href="#" onclick="logout()">Logout</a>
     </nav>
+
 </div>
 
-<!-- HEADER -->
 <div class="header">
     <h1>HR Dashboard</h1>
     <p>Recruitment Analytics Overview</p>
 </div>
 
-<!-- STATS -->
 <div class="cards">
 
     <div class="card">
         <h3>Total Candidates</h3>
-        <h2 id="totalResumes">0</h2>
+        <h2 id="totalResumes" class="total">0</h2>
     </div>
 
     <div class="card">
         <h3>New Candidates</h3>
-        <h2 id="newCandidates">0</h2>
+        <h2 id="newCandidates" class="new">0</h2>
     </div>
 
     <div class="card">
         <h3>Selected</h3>
-        <h2 id="selectedCount">0</h2>
+        <h2 id="selectedCount" class="selected">0</h2>
     </div>
 
     <div class="card">
         <h3>Rejected</h3>
-        <h2 id="rejectedCount">0</h2>
+        <h2 id="rejectedCount" class="rejected">0</h2>
     </div>
-
+<div class="card">
+    <h3>Average ATS Score</h3>
+    <h2 id="avgScore">0%</h2>
 </div>
 
-<!-- QUICK ACTIONS -->
+<div class="card">
+    <h3>Candidates Analyzed</h3>
+    <h2 id="analyzedCount">0</h2>
+</div>
+
+<div class="card">
+    <h3>Follow Ups Due</h3>
+    <h2 id="followupCount">0</h2>
+</div>
+</div>
+
 <div class="section">
 
     <h2>Quick Actions</h2>
 
-    <button onclick="location.href='upload.html'">
-        📤 Upload Resume
-    </button>
+    <div class="actions">
 
-    <button onclick="location.href='candidates.html'">
-        👥 View Candidates
-    </button>
+        <button
+            class="action-btn"
+            onclick="location.href='upload.html'">
+            📤 Upload Resume
+        </button>
+
+        <button
+            class="action-btn"
+            onclick="location.href='candidates.html'">
+            👥 Candidates
+        </button>
+
+        <button
+            class="action-btn"
+            onclick="location.href='analyze-jd.html'">
+            🎯 JD Analyzer
+        </button>
+
+        <button
+            class="action-btn"
+            onclick="window.open('http://127.0.0.1:8000/export/excel')">
+            📊 Export Excel
+        </button>
+
+        <button
+            class="action-btn"
+            onclick="window.open('http://127.0.0.1:8000/export/csv')">
+            📄 Export CSV
+        </button>
+
+    </div>
 
 </div>
 
 <script>
+
 async function loadDashboard() {
 
-    const token = localStorage.getItem("access_token");
+    try {
 
-    const res = await fetch("http://127.0.0.1:8000/dashboard", {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + token
+        const token =
+            localStorage.getItem("access_token");
+
+        if (!token) {
+
+            window.location.href =
+                "login.html";
+
+            return;
         }
-    });
 
-    const data = await res.json();
+        const res = await fetch(
+            "http://127.0.0.1:8000/dashboard",
+            {
+                method: "GET",
+                headers: {
+                    "Authorization":
+                        "Bearer " + token
+                }
+            }
+        );
 
-    if (data.status === "success") {
+        const data = await res.json();
 
-        const stats = data.data;
+        console.log("DASHBOARD:", data);
 
-        document.getElementById("totalResumes").innerText = stats.total_candidates;
-        document.getElementById("newCandidates").innerText = stats.new_candidates;
-        document.getElementById("selectedCount").innerText = stats.selected;
-        document.getElementById("rejectedCount").innerText = stats.rejected;
+        if (data.status === "success") {
+
+            const stats = data.data;
+
+            document.getElementById(
+                "totalResumes"
+            ).innerText =
+                stats.total_candidates || 0;
+
+            document.getElementById(
+                "newCandidates"
+            ).innerText =
+                stats.new_candidates || 0;
+
+            document.getElementById(
+                "selectedCount"
+            ).innerText =
+                stats.selected || 0;
+
+            document.getElementById(
+                "rejectedCount"
+            ).innerText =
+                stats.rejected || 0;
+
+            document.getElementById(
+                "avgScore"
+            ).innerText =
+                (stats.average_ats_score || 0) + "%";
+
+            document.getElementById(
+                "analyzedCount"
+            ).innerText =
+                stats.candidates_analyzed || 0;
+
+            document.getElementById(
+                "followupCount"
+            ).innerText =
+                stats.followups_due || 0;
+        }
+
+    } catch (err) {
+
+        console.error(
+            "Dashboard Error:",
+            err
+        );
     }
 }
 
 function logout() {
-    localStorage.removeItem("access_token");
-    window.location.href = "login.html";
+
+    localStorage.removeItem(
+        "access_token"
+    );
+
+    window.location.href =
+        "login.html";
 }
 
 loadDashboard();
+
 </script>
 
 </body>

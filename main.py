@@ -9,12 +9,14 @@ import pandas as pd
 
 from fastapi import FastAPI, UploadFile, File, Depends, Header, HTTPException
 from fastapi.responses import StreamingResponse
+from scipy import stats
 from supabase_auth.errors import AuthApiError
 from fastapi.middleware.cors import CORSMiddleware
 from services.resume_parser import extract_resume_data
 from services.supabase_client import supabase
 from services.jd_analyzer import analyze_candidates
 from services.resume_parser import extract_resume_data, calculate_ats_score
+from services.auth import get_current_user, get_user_role
 from pydantic import BaseModel
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -85,30 +87,6 @@ def health():
 # =========================
 # RESUME LIST
 # =========================
-@app.get("/resumes")
-def get_resumes(user=Depends(get_user)):
-
-    try:
-
-        result = supabase.table("candidates") \
-            .select("*") \
-            .eq("hr_id", str(user.id)) \
-            .order("created_at", desc=True) \
-            .execute()
-
-        return {
-            "status": "success",
-            "data": result.data or []
-        }
-
-    except Exception as e:
-
-        print("GET RESUMES ERROR:", e)
-
-        return {
-            "status": "failed",
-            "error": str(e)
-        }
 
 # =========================
 # UPLOAD RESUME
@@ -402,7 +380,6 @@ from services.resume_parser import calculate_ats_score
 
 @app.post("/analyze-jd")
 def analyze_jd(payload: dict, user=Depends(get_user)):
-
     try:
         jd_text = payload.get("job_description", "")
 
@@ -412,117 +389,97 @@ def analyze_jd(payload: dict, user=Depends(get_user)):
                 "error": "Job description is empty"
             }
 
-        # =========================
-        # GET HR CANDIDATES
-        # =========================
-        resumes = supabase.table("resume_uploads") \
+        candidates = supabase.table("candidates") \
             .select("*") \
             .eq("hr_id", str(user.id)) \
             .execute()
 
         results = []
 
-        # =========================
-        # LOOP CANDIDATES
-        # =========================
-        for r in resumes.data or []:
-
+        for candidate in candidates.data or []:
             try:
-
-                candidate_res = supabase.table("candidates") \
-                    .select("*") \
-                    .eq("id", r.get("candidate_id")) \
-                    .single() \
-                    .execute()
-
-                candidate = candidate_res.data
-
-                if not candidate:
-                    continue
-
-                # =========================
-                # BUILD RESUME TEXT
-                # =========================
                 resume_text = " ".join(
                     str(v)
                     for v in candidate.values()
                     if v
                 )
 
-                # =========================
-                # ATS ANALYSIS
-                # =========================
                 analysis = calculate_ats_score(
                     resume_text,
                     jd_text
                 )
 
-                score = analysis["score"]
+                print("RESUME =", resume_text[:200])
+                print("JD =", jd_text)
+                print("ANALYSIS =", analysis)
 
-                # =========================
-                # SAVE SCORE TO DATABASE
-                # =========================
+                if isinstance(analysis, int):
+                    score = analysis
+                    matched_keywords = []
+                    missing_keywords = []
+                else:
+                    score = analysis.get("score", 0)
+                    matched_keywords = analysis.get(
+                        "matched_keywords",
+                        []
+                    )
+                    missing_keywords = analysis.get(
+                        "missing_keywords",
+                        []
+                    )
+
                 supabase.table("candidates").update({
                     "ats_score": score,
                     "jd_match_percentage": score
                 }).eq(
                     "id",
-                    r.get("candidate_id")
+                    candidate.get("id")
                 ).execute()
 
-                # =========================
-                # RESPONSE DATA
-                # =========================
                 results.append({
-                    "candidate_id": r.get("candidate_id"),
+                    "candidate_id": candidate.get("id"),
                     "name": candidate.get("name"),
                     "email": candidate.get("email"),
                     "phone": candidate.get("phone"),
                     "location": candidate.get("location"),
                     "college_name": candidate.get("college_name"),
                     "skills": candidate.get("skills"),
-
                     "score": score,
-
-                    "matched_keywords":
-                        analysis.get(
-                            "matched_keywords",
-                            []
-                        ),
-
-                    "missing_keywords":
-                        analysis.get(
-                            "missing_keywords",
-                            []
-                        )
+                    "matched_keywords": matched_keywords,
+                    "missing_keywords": missing_keywords
                 })
-
             except Exception as inner_e:
-
                 print(
                     "CANDIDATE ERROR:",
                     inner_e
                 )
-
                 continue
 
-        # =========================
-        # SORT BY ATS SCORE
-        # =========================
         results = sorted(
             results,
             key=lambda x: x["score"],
             reverse=True
         )
 
+        # REMOVE DUPLICATES
+
+        seen_emails = set()
+        unique_results = []
+
+        for r in results:
+            email = r.get("email")
+            if email not in seen_emails:
+                unique_results.append(r)
+                seen_emails.add(email)
+
+        results = unique_results
+
         return {
             "status": "success",
             "total_candidates": len(results),
             "data": results
         }
-
     except Exception as e:
-
         print(
             "JD ANALYSIS ERROR:",
             e
@@ -532,13 +489,132 @@ def analyze_jd(payload: dict, user=Depends(get_user)):
             "status": "failed",
             "error": str(e)
         }
+# ==========================================
+# CANDIDATE STATUS / NOTES UPDATE API
+# ==========================================
+
+from pydantic import BaseModel
+
+class CandidateUpdate(BaseModel):
+
+    # Candidate current recruitment status
+    status: str | None = None
+
+    # HR remarks visible in candidate profile
+    remarks: str | None = None
+
+    # Internal HR notes
+    internal_notes: str | None = None
+
+    # Next follow-up date
+    follow_up_date: str | None = None
+
+
+# ==========================================
+# UPDATE CANDIDATE
+# ==========================================
+# Used from Candidates Page Modal
+#
+# Features:
+# - Update Status
+# - Save Remarks
+# - Save Internal Notes
+# - Save Follow Up Date
+# ==========================================
+
+@app.put("/candidate/{candidate_id}")
+def update_candidate(
+
+    candidate_id: str,
+    payload: CandidateUpdate,
+    user=Depends(get_user)
+
+):
+
+    try:
+
+        update_data = {}
+
+        # --------------------------
+        # STATUS
+        # --------------------------
+        if payload.status is not None:
+
+            update_data["status"] = (
+                payload.status
+            )
+
+        # --------------------------
+        # REMARKS
+        # --------------------------
+        if payload.remarks is not None:
+
+            update_data["remarks"] = (
+                payload.remarks
+            )
+
+        # --------------------------
+        # INTERNAL NOTES
+        # --------------------------
+        if payload.internal_notes is not None:
+
+            update_data[
+                "internal_notes"
+            ] = payload.internal_notes
+
+        # --------------------------
+        # FOLLOW UP DATE
+        # --------------------------
+        if payload.follow_up_date is not None:
+
+            update_data[
+                "follow_up_date"
+            ] = payload.follow_up_date
+
+        # --------------------------
+        # UPDATE DATABASE
+        # --------------------------
+        supabase.table(
+            "candidates"
+        ).update(
+            update_data
+        ).eq(
+            "id",
+            candidate_id
+        ).execute()
+
+        return {
+
+            "status": "success",
+
+            "message":
+                "Candidate updated successfully"
+
+        }
+
+    except Exception as e:
+
+        print(
+            "UPDATE ERROR:",
+            e
+        )
+
+        return {
+
+            "status": "failed",
+
+            "error":
+                str(e)
+
+        }
+
 # =========================
 # DASHBOARD
 # =========================
 @app.get("/dashboard")
 def dashboard(user=Depends(get_user)):
 
-    result = supabase.table("candidates")\
+    result = supabase.table("candidates") \
         .select("*") \
         .eq("hr_id", str(user.id)) \
         .execute()
@@ -549,19 +625,49 @@ def dashboard(user=Depends(get_user)):
         "total_candidates": len(candidates),
         "new_candidates": 0,
         "selected": 0,
-        "rejected": 0
+        "rejected": 0,
+        "average_ats_score": 0,
+        "candidates_analyzed": 0,
+        "followups_due": 0
     }
 
     for c in candidates:
+
+        # STATUS
 
         status = (c.get("status", "") or "").strip().lower()
 
         if status == "new":
             stats["new_candidates"] += 1
+
         elif status == "selected":
             stats["selected"] += 1
+
         elif status == "rejected":
             stats["rejected"] += 1
+
+        # ATS SCORE
+
+        ats_score = c.get("ats_score") or 0
+
+        stats["average_ats_score"] += ats_score
+
+        if ats_score > 0:
+            stats["candidates_analyzed"] += 1
+
+        # FOLLOW UP
+
+        if c.get("follow_up_date"):
+            stats["followups_due"] += 1
+
+    # AVERAGE ATS SCORE
+
+    if candidates:
+
+        stats["average_ats_score"] = round(
+            stats["average_ats_score"] /
+            len(candidates)
+        )
 
     return {
         "status": "success",
@@ -571,14 +677,17 @@ def dashboard(user=Depends(get_user)):
 # =========================
 # CSV EXPORT
 # =========================
-from fastapi import Query
+from fastapi import Query, Depends
 
-@app.get("/export/csv")
-def export_csv(
+@app.get("/export/excel")
+def export_excel(
+
     user=Depends(get_user),
+
     location: str = Query(None),
     status: str = Query(None),
     skills: str = Query(None)
+
 ):
 
     query = supabase.table("candidates") \
@@ -590,41 +699,53 @@ def export_csv(
     data = result.data or []
 
     # FILTERS
+
     if location:
         data = [
             x for x in data
-            if location.lower() in (x.get("location") or "").lower()
+            if location.lower()
+            in (x.get("location") or "").lower()
         ]
 
     if status:
         data = [
             x for x in data
-            if status.lower() == (x.get("status") or "").lower()
+            if status.lower()
+            == (x.get("status") or "").lower()
         ]
 
     if skills:
         data = [
             x for x in data
-            if skills.lower() in (x.get("skills") or "").lower()
+            if skills.lower()
+            in (x.get("skills") or "").lower()
         ]
 
     df = pd.DataFrame(data)
 
-    stream = io.StringIO()
+    stream = io.BytesIO()
 
-    df.to_csv(stream, index=False)
+    with pd.ExcelWriter(
+        stream,
+        engine="openpyxl"
+    ) as writer:
+
+        df.to_excel(
+            writer,
+            index=False,
+            sheet_name="Candidates"
+        )
 
     stream.seek(0)
 
     return StreamingResponse(
-        iter([stream.getvalue()]),
-        media_type="text/csv",
+        stream,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={
             "Content-Disposition":
-            "attachment; filename=candidates.csv"
+            "attachment; filename=candidates.xlsx"
         }
     )
-
 # =========================
 # EXCEL EXPORT
 # =========================
@@ -632,7 +753,7 @@ from fastapi import Query
 
 @app.get("/export/excel")
 def export_excel(
-    user=Depends(get_user),
+   
     location: str = Query(None),
     status: str = Query(None),
     skills: str = Query(None)
@@ -640,7 +761,7 @@ def export_excel(
 
     query = supabase.table("candidates") \
         .select("*") \
-        .eq("hr_id", str(user.id))
+        
 
     result = query.execute()
 
@@ -686,7 +807,7 @@ def export_excel(
             "attachment; filename=candidates.xlsx"
         }
     )
-    # =========================
+# =========================
 # CANDIDATE STATUS UPDATE
 # =========================
 
@@ -783,3 +904,105 @@ def get_candidate(
         .execute()
 
     return result.data
+@app.get("/resumes")
+def get_resumes(user=Depends(get_user)):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    print(
+        "USER ROLE =",
+        role
+    )
+
+    try:
+
+        result = supabase.table("candidates") \
+            .select("*") \
+            .eq("hr_id", str(user.id)) \
+            .order("created_at", desc=True) \
+            .execute()
+
+        return {
+            "status": "success",
+            "data": result.data or []
+        }
+
+    except Exception as e:
+
+        print(
+            "GET RESUMES ERROR:",
+            e
+        )
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
+ # ==========================================
+# Admin Stats API
+# ==========================================
+@app.get("/admin/stats")
+def admin_stats(
+    user=Depends(get_current_user)
+):
+
+    print("USER =", user)
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    print("ROLE =", role)
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    hr_users = supabase.table(
+        "profiles"
+    ).select("*").eq(
+        "role",
+        "hr"
+    ).execute()
+
+    candidates = supabase.table(
+        "candidates"
+    ).select("*").execute()
+
+    return {
+        "hr_count": len(hr_users.data or []),
+        "resume_count": len(candidates.data or []),
+        "active_count": len(hr_users.data or [])
+    }
+# ==========================================
+# HR users API
+# ==========================================
+@app.get("/admin/hr-users")
+def get_hr_users(
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "profiles"
+    ).select("*").execute()
+
+    return {
+        "status": "success",
+        "data": result.data or []
+    }

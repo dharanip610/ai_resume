@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Login - AI Resume ATS</title>
 
-```
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -86,13 +85,11 @@
         margin-bottom: 10px;
     }
 </style>
-```
 
 </head>
 
 <body>
 
-```
 <div class="login-box">
 
     <div class="icon">📄</div>
@@ -165,27 +162,35 @@
                 msg.innerText = error.message;
                 return;
             }
+localStorage.setItem(
+    "role",
+    "admin"
+);
 
-            localStorage.setItem(
-                "access_token",
-                data.session.access_token
-            );
+msg.style.color = "green";
 
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
-            );
+msg.innerText =
+    "Login Success 🚀";
 
-            msg.style.color = "green";
-            msg.innerText =
-                "Login Success 🚀";
+setTimeout(() => {
 
-            setTimeout(() => {
+    const role =
+        localStorage.getItem(
+            "role"
+        );
 
-                window.location.href =
-                    "dashboard.html";
+    if (role === "admin") {
 
-            }, 1000);
+        window.location.href =
+            "admin.html";
+
+    } else {
+
+        window.location.href =
+            "dashboard.html";
+    }
+
+}, 1000);
 
         } catch (err) {
 
@@ -203,8 +208,6 @@
         .addEventListener("click", login);
 
 </script>
-```
-
 </body>
 
 </html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>JD Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="upload.html">Upload</a>
+    <a href="candidates.html">Candidates</a>
+    <a href="analyze-jd.html">JD Analyzer</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<div class="container">
+<h1>JD Analyzer</h1>
+
+<textarea
+    id="jobDescription"
+    placeholder="Paste Job Description Here..."
+    rows="10"
+    style="width:100%;padding:15px;">
+</textarea>
+
+<br><br>
+
+<button onclick="analyzeJD()">
+    Analyze Candidates
+</button>
+
+<br><br>
+
+<table>
+
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Skills</th>
+            <th>ATS Score</th>
+        </tr>
+    </thead>
+
+    <tbody id="resultsBody"></tbody>
+
+</table>
+
+</div>
+
+<script src="analyze-jd.js"></script>
+
+</body>
+
+</html>
