@@ -91,17 +91,16 @@
     id="certificationFilter"
     placeholder="Certification"
 >
-<input
-    type="text"
-    id="internshipFilter"
-    placeholder="Internship"
->
+
+<textarea id="notes"></textarea>
 
 <input
-    type="text"
-    id="certificationFilter"
-    placeholder="Certification"
->
+    type="date"
+    id="followup_date">
+
+<button>
+    Save
+</button>
     <button onclick="loadCandidates()">
         Refresh
     </button>
@@ -129,8 +128,8 @@
                 <th>College</th>
                 <th>Skills</th>
                 <th>ATS Score</th>
-                <th>Status</th>
-                <th>Action</th>
+<th class="center-col">Status</th>
+<th class="center-col">Action</th>
 
             </tr>
 

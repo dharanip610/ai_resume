@@ -34,29 +34,29 @@ a {
 /* NAVBAR */
 /* ===================================================== */
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 8%;
-    background: #111827;
-    border-bottom: 1px solid #334155;
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px;
+    background:#111827;
 }
 
-.logo {
-    font-size: 22px;
-    font-weight: 700;
-    color: #38bdf8;
+.logo{
+    font-size:22px;
+    font-weight:700;
+    color:#38bdf8;
 }
 
-.navbar nav {
-    display: flex;
-    gap: 18px;
+nav{
+    display:flex;
+    gap:25px;
 }
 
 .navbar a {
     color: #e2e8f0;
     font-weight: 500;
+    text-decoration: none;
 }
 
 .navbar a:hover {
@@ -705,4 +705,79 @@ tr:hover {
 .detail-label{
     font-weight:bold;
     color:#38bdf8;
+}
+.delete-btn{
+
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    margin-left:8px;
+}
+
+.delete-btn:hover{
+
+    background:#dc2626;
+}
+.action-buttons{
+
+    display:flex;
+
+    gap:8px;
+
+    justify-content:center;
+
+    align-items:center;
+}
+
+.view-btn{
+
+    background:#2563eb;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+}
+
+.delete-btn{
+
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+}
+.center-col{
+    text-align:center;
+}
+
+td{
+    vertical-align:middle;
+}
+
+.action-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
 }

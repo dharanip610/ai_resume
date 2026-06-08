@@ -71,17 +71,33 @@ function renderCandidates(list) {
             <td>${c.skills || "N/A"}</td>
 
             <td>
-                <span class="status-badge ${formatStatus(c.status)}">
-                    ${c.status || "New"}
-                </span>
-            </td>
 
-            <td>
-                <button onclick="updateStatus('${c.id}', 'Selected')">✔</button>
-                <button onclick="updateStatus('${c.id}', 'Rejected')">✖</button>
-                <button onclick="updateStatus('${c.id}', 'On Hold')">⏸</button>
-            </td>
+    <textarea
+        id="notes-${c.id}"
+        placeholder="Notes"
+    >${c.notes || ""}</textarea>
 
+    <br><br>
+
+    <input
+        type="date"
+        id="followup-${c.id}"
+        value="${c.followup_date || ""}"
+    >
+
+    <br><br>
+
+    <button onclick="saveNotes('${c.id}')">
+        Save Notes
+    </button>
+
+    <hr>
+
+    <button onclick="updateStatus('${c.id}', 'Selected')">✔</button>
+    <button onclick="updateStatus('${c.id}', 'Rejected')">✖</button>
+    <button onclick="updateStatus('${c.id}', 'On Hold')">⏸</button>
+
+</td>
         </tr>
     `).join("");
 }
@@ -90,25 +106,45 @@ function renderCandidates(list) {
 // ===============================
 // STATUS UPDATE
 // ===============================
-async function updateStatus(id, status) {
+async function saveNotes(id) {
+
+    const notes =
+        document.getElementById(
+            `notes-${id}`
+        ).value;
+
+    const followup_date =
+        document.getElementById(
+            `followup-${id}`
+        ).value;
 
     try {
 
-        const res = await fetch(`${API_BASE}/candidate-status`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ id, status })
-        });
+        const res = await fetch(
+            `${API_BASE}/candidate-notes`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    id,
+                    notes,
+                    followup_date
+                })
+            }
+        );
 
-        if (!res.ok) throw new Error("Update failed");
+        const data = await res.json();
 
-        loadCandidates();
+        alert("Notes Saved");
 
     } catch (err) {
+
         console.error(err);
-        alert("Status update failed");
+
+        alert("Save Failed");
     }
 }
 
@@ -155,7 +191,7 @@ function applyFilters() {
         filtered = filtered.filter(c => c.status === statusValue);
     }
 
-    renderCandidates(filtered);
+    render(filtered);
 }
 
 

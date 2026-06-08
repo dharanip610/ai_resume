@@ -162,22 +162,27 @@
                 msg.innerText = error.message;
                 return;
             }
+const user = data.user;
+
+const { data: profile } = await supabaseClient
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
 localStorage.setItem(
-    "role",
-    "admin"
+    "access_token",
+    data.session.access_token
 );
 
-msg.style.color = "green";
-
-msg.innerText =
-    "Login Success 🚀";
-
+localStorage.setItem(
+    "role",
+    profile.role
+);
 setTimeout(() => {
 
     const role =
-        localStorage.getItem(
-            "role"
-        );
+        localStorage.getItem("role");
 
     if (role === "admin") {
 
@@ -191,6 +196,13 @@ setTimeout(() => {
     }
 
 }, 1000);
+
+msg.style.color = "green";
+
+msg.innerText =
+    "Login Success 🚀";
+
+
 
         } catch (err) {
 

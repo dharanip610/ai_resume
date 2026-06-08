@@ -134,7 +134,7 @@ function updateDashboard() {
 
     const followupCount =
         candidates.filter(
-            c => c.follow_up_date
+            c => c.followup_date
         ).length;
 
     document.getElementById(

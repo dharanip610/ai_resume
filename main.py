@@ -9,6 +9,7 @@ import pandas as pd
 
 from fastapi import FastAPI, UploadFile, File, Depends, Header, HTTPException
 from fastapi.responses import StreamingResponse
+from fastapi.responses import RedirectResponse
 from scipy import stats
 from supabase_auth.errors import AuthApiError
 from fastapi.middleware.cors import CORSMiddleware
@@ -129,126 +130,223 @@ def extract_text_from_file(file_bytes, filename):
 # =========================
 def parse_resume(text):
 
+    import re
+
+    lines = [
+        line.strip()
+        for line in text.split("\n")
+        if line.strip()
+    ]
+
+    # =====================
+    # EMAIL
+    # =====================
+    email_match = re.search(
+        r'[\w\.-]+@[\w\.-]+\.\w+',
+        text
+    )
+
+    email = (
+        email_match.group(0)
+        if email_match
+        else None
+    )
+
+    # =====================
+    # PHONE
+    # =====================
+    phone_match = re.search(
+        r'(?:\+91)?[6-9]\d{9}',
+        text
+    )
+
+    phone = (
+        phone_match.group(0)
+        if phone_match
+        else None
+    )
+
+    # =====================
     # NAME
+    # =====================
+    name = "Unknown"
+
     name_match = re.search(
         r"Name\s*:\s*(.+)",
         text,
         re.IGNORECASE
     )
 
-    name = (
-        name_match.group(1).strip()
-        if name_match
-        else "Unknown"
-    )
+    if name_match:
 
-    # EMAIL
-    email_match = re.search(
-        r'[\w\.-]+@[\w\.-]+\.\w+',
-        text
-    )
+        name = name_match.group(1).strip()
 
-    email = email_match.group() if email_match else None
+    else:
 
-    # PHONE
-    phone_match = re.search(
-        r'(?:\+91)?[6-9]\d{9}',
-        text
-    )
+        for line in lines[:10]:
 
-    phone = phone_match.group() if phone_match else None
+            if (
+                "@" not in line
+                and not re.search(r"\d{10}", line)
+                and len(line.split()) <= 5
+                and len(line) > 2
+            ):
+                name = line
+                break
 
-    # SKILLS
-    skills_match = re.search(
-        r"Skills\s*:\s*(.*?)\s*Project:",
-        text,
-        re.IGNORECASE | re.DOTALL
-    )
-
-    skills = (
-        skills_match.group(1).replace("\n", " ").strip()
-        if skills_match
-        else None
-    )
-
+    # =====================
     # LOCATION
+    # =====================
+    location = None
+
     location_match = re.search(
         r"Location\s*:\s*(.+)",
         text,
         re.IGNORECASE
     )
 
-    location = (
-        location_match.group(1).strip()
-        if location_match
-        else None
-    )
+    if location_match:
+        location = location_match.group(1).strip()
 
+    # =====================
     # COLLEGE
-    college_match = re.search(
-        r"College\s*:\s*(.+)",
-        text,
-        re.IGNORECASE
-    )
+    # =====================
+    college_name = None
 
-    college_name = (
-        college_match.group(1).strip()
-        if college_match
-        else None
-    )
+    for line in lines:
 
+        lower = line.lower()
+
+        if (
+            "college" in lower
+            or "university" in lower
+            or "institute" in lower
+            or "school" in lower
+        ):
+            college_name = line
+            break
+
+    # =====================
     # PASSOUT YEAR
-    passout_match = re.search(
-        r"Passout\s*Year\s*:\s*(\d{4})",
-        text,
-        re.IGNORECASE
+    # =====================
+    passout_year = None
+
+    years = re.findall(
+        r"\b20\d{2}\b",
+        text
     )
 
-    passout_year = (
-        passout_match.group(1)
-        if passout_match
+    if years:
+
+        valid_years = [
+            y for y in years
+            if 2020 <= int(y) <= 2035
+        ]
+
+        if valid_years:
+            passout_year = max(valid_years)
+
+    # =====================
+    # SKILLS
+    # =====================
+    skill_db = [
+        "python",
+        "java",
+        "sql",
+        "html",
+        "css",
+        "javascript",
+        "react",
+        "reactjs",
+        "node",
+        "nodejs",
+        "express",
+        "mongodb",
+        "mysql",
+        "fastapi",
+        "django",
+        "flask",
+        "excel",
+        "power bi",
+        "aws",
+        "azure",
+        "typescript",
+        "c",
+        "c++"
+    ]
+
+    text_lower = text.lower()
+
+    skills_found = []
+
+    for skill in skill_db:
+
+        if skill in text_lower:
+            skills_found.append(skill)
+
+    skills = (
+        ", ".join(sorted(set(skills_found)))
+        if skills_found
         else None
     )
 
+    # =====================
     # INTERNSHIP
+    # =====================
+    internship_details = None
+
     internship_match = re.search(
-        r"Internship\s*:\s*(.+)",
+        r"INTERNSHIP(.*?)(CERTIFICATION|PROJECT|EXPERIENCE|$)",
         text,
-        re.IGNORECASE
+        re.IGNORECASE | re.DOTALL
     )
 
-    internship = (
-        internship_match.group(1).strip()
-        if internship_match
-        else None
-    )
+    if internship_match:
 
+        internship_details = (
+            internship_match.group(1)
+            .strip()[:1000]
+        )
+
+    # =====================
     # CERTIFICATION
+    # =====================
+    certification_details = None
+
     certification_match = re.search(
-        r"Certification\s*:\s*(.+)",
+        r"CERTIFICATION(S)?(.*?)(PROJECT|WORKSHOP|EXPERIENCE|LANGUAGE|$)",
         text,
-        re.IGNORECASE
+        re.IGNORECASE | re.DOTALL
     )
 
-    certification = (
-        certification_match.group(1).strip()
-        if certification_match
-        else None
-    )
+    if certification_match:
 
+        certification_details = (
+            certification_match.group(2)
+            .strip()[:1000]
+        )
+
+    # =====================
     # EXPERIENCE
+    # =====================
+    experience_details = None
+
     experience_match = re.search(
-        r"Experience\s*:\s*(.+)",
+        r"EXPERIENCE(.*?)(PROJECT|CERTIFICATION|LANGUAGE|$)",
         text,
-        re.IGNORECASE
+        re.IGNORECASE | re.DOTALL
     )
 
-    experience = (
-        experience_match.group(1).strip()
-        if experience_match
-        else None
-    )
+    if experience_match:
 
+        experience_details = (
+            experience_match.group(1)
+            .strip()[:1000]
+        )
+
+    # =====================
+    # RETURN
+    # =====================
     return {
         "name": name,
         "email": email,
@@ -257,11 +355,10 @@ def parse_resume(text):
         "skills": skills,
         "location": location,
         "passout_year": passout_year,
-        "internship_details": internship,
-        "certification_details": certification,
-        "experience_details": experience
+        "internship_details": internship_details,
+        "certification_details": certification_details,
+        "experience_details": experience_details
     }
-
 
 # =========================
 # UPLOAD API (FINAL FIX)
@@ -330,6 +427,7 @@ async def upload_resume(
             "internship_details": parsed.get("internship_details"),
             "certification_details": parsed.get("certification_details"),
             "experience_details": parsed.get("experience_details"),
+            "resume_text": text,
             "status": "New",
             "ats_score": 0,
             "jd_match_percentage": 0,
@@ -398,7 +496,7 @@ def analyze_jd(payload: dict, user=Depends(get_user)):
 
         for candidate in candidates.data or []:
             try:
-                resume_text = " ".join(
+                resume_text = candidate.get("resume_text") or " ".join(
                     str(v)
                     for v in candidate.values()
                     if v
@@ -507,7 +605,7 @@ class CandidateUpdate(BaseModel):
     internal_notes: str | None = None
 
     # Next follow-up date
-    follow_up_date: str | None = None
+    followup_date: str | None = None
 
 
 # ==========================================
@@ -559,17 +657,17 @@ def update_candidate(
         if payload.internal_notes is not None:
 
             update_data[
-                "internal_notes"
+                "notes"
             ] = payload.internal_notes
 
         # --------------------------
         # FOLLOW UP DATE
         # --------------------------
-        if payload.follow_up_date is not None:
+        if payload.followup_date is not None:
 
             update_data[
-                "follow_up_date"
-            ] = payload.follow_up_date
+                "followup_date"
+            ] = payload.followup_date
 
         # --------------------------
         # UPDATE DATABASE
@@ -614,10 +712,26 @@ def update_candidate(
 @app.get("/dashboard")
 def dashboard(user=Depends(get_user)):
 
-    result = supabase.table("candidates") \
-        .select("*") \
-        .eq("hr_id", str(user.id)) \
-        .execute()
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role == "admin":
+
+        result = supabase.table("candidates") \
+            .select("*") \
+            .execute()
+
+    else:
+
+        result = supabase.table("candidates") \
+            .select("*") \
+            .eq("hr_id", str(user.id)) \
+            .execute()
+
+    print("USER ID =", user.id)
+    print("ROLE =", role)
+    print("RESULT DATA =", result.data)
 
     candidates = result.data or []
 
@@ -633,8 +747,6 @@ def dashboard(user=Depends(get_user)):
 
     for c in candidates:
 
-        # STATUS
-
         status = (c.get("status", "") or "").strip().lower()
 
         if status == "new":
@@ -646,8 +758,6 @@ def dashboard(user=Depends(get_user)):
         elif status == "rejected":
             stats["rejected"] += 1
 
-        # ATS SCORE
-
         ats_score = c.get("ats_score") or 0
 
         stats["average_ats_score"] += ats_score
@@ -655,12 +765,8 @@ def dashboard(user=Depends(get_user)):
         if ats_score > 0:
             stats["candidates_analyzed"] += 1
 
-        # FOLLOW UP
-
-        if c.get("follow_up_date"):
+        if c.get("followup_date"):
             stats["followups_due"] += 1
-
-    # AVERAGE ATS SCORE
 
     if candidates:
 
@@ -673,9 +779,8 @@ def dashboard(user=Depends(get_user)):
         "status": "success",
         "data": stats
     }
-
 # =========================
-# CSV EXPORT
+# EXCEL EXPORT
 # =========================
 from fastapi import Query, Depends
 
@@ -747,64 +852,64 @@ def export_excel(
         }
     )
 # =========================
-# EXCEL EXPORT
+# CSV EXPORT
 # =========================
-from fastapi import Query
+@app.get("/export/csv")
+def export_csv(
 
-@app.get("/export/excel")
-def export_excel(
-   
+    user=Depends(get_user),
+
     location: str = Query(None),
     status: str = Query(None),
     skills: str = Query(None)
+
 ):
 
-    query = supabase.table("candidates") \
-        .select("*") \
-        
+    query = (
+        supabase.table("candidates")
+        .select("*")
+        .eq("hr_id", str(user.id))
+    )
 
     result = query.execute()
 
     data = result.data or []
-
-    # FILTERS
     if location:
         data = [
             x for x in data
-            if location.lower() in (x.get("location") or "").lower()
+            if location.lower()
+            in (x.get("location") or "").lower()
         ]
 
     if status:
         data = [
             x for x in data
-            if status.lower() == (x.get("status") or "").lower()
+            if status.lower()
+            == (x.get("status") or "").lower()
         ]
 
     if skills:
         data = [
             x for x in data
-            if skills.lower() in (x.get("skills") or "").lower()
+            if skills.lower()
+            in (x.get("skills") or "").lower()
         ]
 
     df = pd.DataFrame(data)
 
-    stream = io.BytesIO()
+    stream = io.StringIO()
 
-    with pd.ExcelWriter(stream, engine="openpyxl") as writer:
-        df.to_excel(
-            writer,
-            index=False,
-            sheet_name="Candidates"
-        )
-
-    stream.seek(0)
+    df.to_csv(
+        stream,
+        index=False
+    )
 
     return StreamingResponse(
-        stream,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        iter([stream.getvalue()]),
+        media_type="text/csv",
         headers={
             "Content-Disposition":
-            "attachment; filename=candidates.xlsx"
+            "attachment; filename=candidates.csv"
         }
     )
 # =========================
@@ -849,8 +954,8 @@ def update_candidate_status(
 class CandidateNotesRequest(BaseModel):
     id: str
     remarks: str = ""
-    internal_notes: str = ""
-    follow_up_date: str = ""
+    notes: str = ""
+    followup_date: str = ""
 
 
 @app.put("/candidate-notes")
@@ -863,11 +968,9 @@ def update_candidate_notes(
 
             "remarks": payload.remarks,
 
-            "internal_notes":
-                payload.internal_notes,
+            "notes": payload.notes,
 
-            "follow_up_date":
-                payload.follow_up_date
+            "followup_date": payload.followup_date
 
         }).eq(
             "id",
@@ -918,11 +1021,20 @@ def get_resumes(user=Depends(get_user)):
 
     try:
 
-        result = supabase.table("candidates") \
-            .select("*") \
-            .eq("hr_id", str(user.id)) \
-            .order("created_at", desc=True) \
-            .execute()
+        if role == "admin":
+
+            result = supabase.table("candidates") \
+                .select("*") \
+                .order("created_at", desc=True) \
+                .execute()
+
+        else:
+
+            result = supabase.table("candidates") \
+                .select("*") \
+                .eq("hr_id", str(user.id)) \
+                .order("created_at", desc=True) \
+                .execute()
 
         return {
             "status": "success",
@@ -940,7 +1052,7 @@ def get_resumes(user=Depends(get_user)):
             "status": "failed",
             "error": str(e)
         }
- # ==========================================
+# ==========================================
 # Admin Stats API
 # ==========================================
 @app.get("/admin/stats")
@@ -1006,3 +1118,97 @@ def get_hr_users(
         "status": "success",
         "data": result.data or []
     }
+@app.post("/admin/create-hr")
+def create_hr():
+
+    return {
+        "status": "success"
+    }
+from fastapi import Body
+
+@app.delete("/admin/delete-hr")
+def delete_hr(
+    payload: dict = Body(...)
+):
+
+    hr_id = payload.get("id")
+
+    supabase.table(
+        "profiles"
+    ).delete().eq(
+        "id",
+        hr_id
+    ).execute()
+
+    return {
+        "status": "success"
+    }
+# ==========================================
+# download resume file from storage
+# ==========================================
+@app.get("/download")
+def download_resume(path: str):
+
+    try:
+
+        file = supabase.storage \
+            .from_("resumes") \
+            .create_signed_url(
+                path,
+                60
+            )
+
+        return RedirectResponse(
+            file["signedURL"]
+        )
+
+    except Exception as e:
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
+# ==========================================
+# DELETE CANDIDATE
+# ==========================================
+@app.delete("/candidate/{candidate_id}")
+def delete_candidate(
+    candidate_id: str,
+    user=Depends(get_user)
+):
+
+    try:
+
+        role = get_user_role(
+            str(user.id)
+        )
+
+        query = supabase.table(
+            "candidates"
+        ).delete().eq(
+            "id",
+            candidate_id
+        )
+
+        if role != "admin":
+
+            query = query.eq(
+                "hr_id",
+                str(user.id)
+            )
+
+        query.execute()
+
+        return {
+            "status": "success",
+            "message": "Candidate deleted"
+        }
+
+    except Exception as e:
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
+from fastapi import Body
+

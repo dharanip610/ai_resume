@@ -70,52 +70,66 @@ function render(data) {
 
     data.forEach(c => {
 
-        html += `
-        <tr>
+    html += `
+    <tr>
 
-            <td>${c.name || "-"}</td>
+        <td>${c.name || "-"}</td>
 
-            <td>${c.email || "-"}</td>
+        <td>${c.email || "-"}</td>
 
-           <td>${c.phone || "-"}</td>
+        <td>${c.phone || "-"}</td>
 
-           <td>${c.location || "-"}</td>              
+        <td>${c.location || "-"}</td>
 
-            <td>${c.passout_year || "-"}</td>
+        <td>${c.passout_year || "-"}</td>
 
-            <td>${c.college_name || "-"}</td>
-            <td>
-                <span class="score">
-                    ${c.ats_score || 0}%
-                </span>
-            </td>
+        <td>${c.college_name || "-"}</td>
+        <td>${c.skills || "-"}</td>
 
-            <td>
-                <span class="badge ${(c.status || "New").replace(/\s+/g, "")}">
-                    ${c.status || "New"}
-                </span>
-            </td>
+        <td>
+            <span class="score">
+                ${c.ats_score || 0}%
+            </span>
+        </td>
 
-            <td>
+        <td style="text-align:center;">
+            <span class="badge ${(c.status || "New").replace(/\s+/g, "")}">
+                ${c.status || "New"}
+            </span>
+        </td>
+
+        <td style="text-align:center;">
+
+            <div class="action-buttons">
+
                 <button
                     class="view-btn"
                     onclick="viewCandidate('${c.id}')">
                     View
                 </button>
-            </td>
 
-        </tr>
-        `;
-    });
+                <button
+                    class="delete-btn"
+                    onclick="deleteCandidate('${c.id}')">
+                    Delete
+                </button>
 
+            </div>
+
+        </td>
+
+    </tr>
+    `;
+});
     document.getElementById("candidateTable").innerHTML = html;
 }
 
 // =========================
 // FILTER
 // =========================
-
 function filterData() {
+
+    let filtered = [...allCandidates];
 
     const search =
         document.getElementById("searchInput")
@@ -136,7 +150,8 @@ function filterData() {
     const experience =
         document.getElementById("experienceFilter")
         ?.value.toLowerCase() || "";
-            const internship =
+
+    const internship =
         document.getElementById("internshipFilter")
         ?.value.toLowerCase() || "";
 
@@ -144,19 +159,15 @@ function filterData() {
         document.getElementById("certificationFilter")
         ?.value.toLowerCase() || "";
 
-
-    let filtered = [...allCandidates];
-
     // STATUS FILTER
-
     if (status) {
 
         filtered = filtered.filter(
             c => c.status === status
         );
     }
-        // LOCATION FILTER
 
+    // LOCATION FILTER
     if (location) {
 
         filtered = filtered.filter(
@@ -168,20 +179,17 @@ function filterData() {
     }
 
     // PASSOUT YEAR FILTER
-
     if (year) {
 
         filtered = filtered.filter(
             c =>
-                (c.passout_year || "")
-                .toString()
+                String(c.passout_year || "")
                 .toLowerCase()
                 .includes(year)
         );
     }
 
     // EXPERIENCE FILTER
-
     if (experience) {
 
         filtered = filtered.filter(
@@ -191,155 +199,97 @@ function filterData() {
                 .includes(experience)
         );
     }
+
     // INTERNSHIP FILTER
+    if (internship) {
 
-if (internship) {
-
-    filtered = filtered.filter(
-        c =>
-            (c.internship_details || "")
-            .toLowerCase()
-            .includes(internship)
-    );
-}
-// CERTIFICATION FILTER
-
-if (certification) {
-
-    filtered = filtered.filter(
-        c =>
-            (c.certification_details || "")
-            .toLowerCase()
-            .includes(certification)
-    );
-}
-
-(c.location || "")
-    .toLowerCase()
-    .includes(search)
-
-||
-
-(c.passout_year || "")
-    .toString()
-    .toLowerCase()
-    .includes(search)
-
-||
-
-(c.experience_details || "")
-    .toLowerCase()
-    .includes(search)
-
-||
-
-(c.internship_details || "")
-    .toLowerCase()
-    .includes(search)
-
-||
-
-(c.certification_details || "")
-    .toLowerCase()
-    .includes(search)
-
-    // LOCATION FILTER
-
-    if (location) {
-
-        filtered = filtered.filter(c =>
-
-            (c.location || "")
+        filtered = filtered.filter(
+            c =>
+                (c.internship_details || "")
                 .toLowerCase()
-                .includes(location)
+                .includes(internship)
         );
     }
 
-    // PASSOUT YEAR FILTER
+    // CERTIFICATION FILTER
+    if (certification) {
 
-    if (year) {
-
-        filtered = filtered.filter(c =>
-
-            String(
-                c.passout_year || ""
-            )
-            .toLowerCase()
-            .includes(year)
-        );
-    }
-
-    // EXPERIENCE FILTER
-
-    if (experience) {
-
-        filtered = filtered.filter(c =>
-
-            (c.experience_details || "")
+        filtered = filtered.filter(
+            c =>
+                (c.certification_details || "")
                 .toLowerCase()
-                .includes(experience)
+                .includes(certification)
         );
     }
 
     // GLOBAL SEARCH
-
     if (search) {
 
-        filtered = filtered.filter(c =>
+        filtered = filtered.filter(
+            c =>
 
-            (c.name || "")
+                (c.name || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            (c.email || "")
+                (c.email || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            (c.skills || "")
+                (c.skills || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            (c.college_name || "")
+                (c.college_name || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            (c.phone || "")
+                (c.phone || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            (c.location || "")
+                (c.location || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            (c.experience_details || "")
+                (c.experience_details || "")
                 .toLowerCase()
                 .includes(search)
 
-            ||
+                ||
 
-            String(
-                c.passout_year || ""
-            )
-            .toLowerCase()
-            .includes(search)
+                (c.internship_details || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                (c.certification_details || "")
+                .toLowerCase()
+                .includes(search)
+
+                ||
+
+                String(c.passout_year || "")
+                .toLowerCase()
+                .includes(search)
         );
     }
 
     render(filtered);
 }
-
 // =========================
 // VIEW CANDIDATE
 // =========================
@@ -490,7 +440,7 @@ function viewCandidate(id) {
         document.getElementById(
             "candidateFollowUp"
         ).value =
-            candidate.follow_up_date || "";
+            candidate.followup_date || "";
 
     }, 50);
 }
@@ -550,7 +500,7 @@ async function saveCandidate() {
                     "candidateNotes"
                 ).value,
 
-            follow_up_date:
+            followup_date:
                 document.getElementById(
                     "candidateFollowUp"
                 ).value || null
@@ -714,3 +664,64 @@ document.addEventListener(
             );
     }
 );
+async function deleteCandidate(candidateId) {
+
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this candidate?"
+    );
+
+    if (!confirmDelete) {
+        return;
+    }
+
+    try {
+
+        const token =
+            localStorage.getItem(
+                "access_token"
+            );
+
+        const res = await fetch(
+
+            `${API_BASE}/candidate/${candidateId}`,
+
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Authorization":
+                        "Bearer " + token
+                }
+            }
+        );
+
+        const data =
+            await res.json();
+
+        if (
+            data.status === "success"
+        ) {
+
+            alert(
+                "Candidate deleted successfully"
+            );
+
+            loadCandidates();
+
+        } else {
+
+            alert(
+                data.error ||
+                "Delete failed"
+            );
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert(
+            "Delete failed"
+        );
+    }
+}

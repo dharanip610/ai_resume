@@ -226,24 +226,82 @@
             🎯 JD Analyzer
         </button>
 
-        <button
-            class="action-btn"
-            onclick="window.open('http://127.0.0.1:8000/export/excel')">
-            📊 Export Excel
-        </button>
+       <button
+    class="action-btn"
+    onclick="exportExcel()">
+    📊 Export Excel
+</button>
 
-        <button
-            class="action-btn"
-            onclick="window.open('http://127.0.0.1:8000/export/csv')">
-            📄 Export CSV
-        </button>
+<button
+    class="action-btn"
+    onclick="exportCSV()">
+    📄 Export CSV
+</button>
 
     </div>
 
 </div>
 
 <script>
+function exportExcel() {
 
+    const token =
+        localStorage.getItem("access_token");
+
+    fetch(
+        "http://127.0.0.1:8000/export/excel",
+        {
+            headers: {
+                Authorization:
+                    "Bearer " + token
+            }
+        }
+    )
+    .then(res => res.blob())
+    .then(blob => {
+
+        const a =
+            document.createElement("a");
+
+        a.href =
+            URL.createObjectURL(blob);
+
+        a.download =
+            "candidates.xlsx";
+
+        a.click();
+    });
+}
+
+function exportCSV() {
+
+    const token =
+        localStorage.getItem("access_token");
+
+    fetch(
+        "http://127.0.0.1:8000/export/csv",
+        {
+            headers: {
+                Authorization:
+                    "Bearer " + token
+            }
+        }
+    )
+    .then(res => res.blob())
+    .then(blob => {
+
+        const a =
+            document.createElement("a");
+
+        a.href =
+            URL.createObjectURL(blob);
+
+        a.download =
+            "candidates.csv";
+
+        a.click();
+    });
+}
 async function loadDashboard() {
 
     try {

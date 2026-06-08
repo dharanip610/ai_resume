@@ -186,19 +186,49 @@ function exportCSV() {
 // ======================
 function exportExcel() {
 
-    const token = localStorage.getItem("access_token");
+    const token =
+        localStorage.getItem("access_token");
+
+    console.log(
+        "EXPORT TOKEN =",
+        token
+    );
 
     fetch(API + "/export/excel", {
         headers: {
-            Authorization: "Bearer " + token
+            Authorization:
+                "Bearer " + token
         }
     })
-    .then(res => res.blob())
+    .then(res => {
+
+        console.log(
+            "EXPORT STATUS =",
+            res.status
+        );
+
+        return res.blob();
+    })
     .then(blob => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "resumes.xlsx";
+
+        const a =
+            document.createElement("a");
+
+        a.href =
+            URL.createObjectURL(blob);
+
+        a.download =
+            "resumes.xlsx";
+
         a.click();
+    })
+    .catch(err => {
+
+        console.error(
+            "EXPORT ERROR =",
+            err
+        );
+
     });
 }
 
