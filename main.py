@@ -1094,55 +1094,90 @@ def admin_stats(
 # ==========================================
 # HR users API
 # ==========================================
-@app.get("/admin/hr-users")
-def get_hr_users(
-    user=Depends(get_current_user)
-):
-
-    role = get_user_role(
-        str(user.id)
-    )
-
-    if role != "admin":
-
-        raise HTTPException(
-            status_code=403,
-            detail="Admin only"
-        )
-
-    result = supabase.table(
-        "profiles"
-    ).select("*").execute()
-
-    return {
-        "status": "success",
-        "data": result.data or []
-    }
-@app.post("/admin/create-hr")
-def create_hr():
-
-    return {
-        "status": "success"
-    }
 from fastapi import Body
+
+# ==========================================
+# CREATE HR
+# ==========================================
+
+@app.post("/admin/create-hr")
+def create_hr(
+    payload: dict = Body(...)
+):
+    print("CREATE HR API CALLED")
+    try:
+
+        email = payload.get("email")
+        password = payload.get("password")
+
+        if not email or not password:
+
+            return {
+                "status": "failed",
+                "error": "Email and password required"
+            }
+
+        auth_user = supabase.auth.admin.create_user({
+            "email": email,
+            "password": password,
+            "email_confirm": True
+        })
+
+        user_id = auth_user.user.id
+
+        supabase.table(
+            "profiles"
+        ).insert({
+            "id": user_id,
+            "email": email,
+            "role": "hr"
+        }).execute()
+
+        return {
+            "status": "success",
+            "message": "HR created successfully"
+        }
+
+    except Exception as e:
+
+        print("CREATE HR ERROR =", e)
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
+
+
+# ==========================================
+# DELETE HR
+# ==========================================
 
 @app.delete("/admin/delete-hr")
 def delete_hr(
     payload: dict = Body(...)
 ):
 
-    hr_id = payload.get("id")
+    try:
 
-    supabase.table(
-        "profiles"
-    ).delete().eq(
-        "id",
-        hr_id
-    ).execute()
+        hr_id = payload.get("id")
 
-    return {
-        "status": "success"
-    }
+        supabase.table(
+            "profiles"
+        ).delete().eq(
+            "id",
+            hr_id
+        ).execute()
+
+        return {
+            "status": "success"
+        }
+
+    except Exception as e:
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
 # ==========================================
 # download resume file from storage
 # ==========================================
@@ -1210,5 +1245,28 @@ def delete_candidate(
             "status": "failed",
             "error": str(e)
         }
-from fastapi import Body
+@app.get("/admin/hr-users")
+def get_hr_users(
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "profiles"
+    ).select("*").execute()
+
+    return {
+        "status": "success",
+        "data": result.data or []
+    }
 
