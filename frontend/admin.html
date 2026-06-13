@@ -18,9 +18,8 @@
     <div class="logo">ATS Admin Panel</div>
 
     <nav>
-        <a href="admin.html">Admin</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="candidates.html">Candidates</a>
+        <a href="onboarding-requests.html"> Onboarding</a>
+        <a href="demo-requests.html">Demo Requests</a>
         <a href="login.html">Logout</a>
     </nav>
 
@@ -35,40 +34,35 @@
     </div>
 
     <!-- ================= STATS ================= -->
-    <div class="cards">
 
-        <div class="card">
-            <h3>Total HR Users</h3>
-            <h2 id="hrCount">0</h2>
-        </div>
+<div class="cards">
 
-        <div class="card">
-            <h3>Total Resumes</h3>
-            <h2 id="resumeCount">0</h2>
-        </div>
-
-        <div class="card">
-            <h3>Active Today</h3>
-            <h2 id="activeCount">0</h2>
-        </div>
-
+    <div class="card">
+        <h3>Total HR Users</h3>
+        <h2 id="hrCount">0</h2>
     </div>
 
-    <!-- ================= CREATE HR ================= -->
-    <div class="login-container">
-
-        <h2>Create HR User</h2>
-
-        <input type="email" id="hrEmail" placeholder="HR Email">
-        <input type="password" id="hrPassword" placeholder="Password">
-
-        <button onclick="createHR()">
-            Create HR
-        </button>
-
-        <p id="adminMsg"></p>
-
+    <div class="card">
+        <h3>Total Resumes</h3>
+        <h2 id="resumeCount">0</h2>
     </div>
+
+    <div class="card">
+        <h3>Active Today</h3>
+        <h2 id="activeCount">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>Pending Onboarding</h3>
+        <h2 id="pendingOnboarding">0</h2>
+    </div>
+
+    <div class="card">
+        <h3>Pending Demo Requests</h3>
+        <h2 id="pendingDemo">0</h2>
+    </div>
+
+</div>
 
     <!-- ================= HR LIST ================= -->
     <h2 style="margin-top:40px;">HR Users</h2>
@@ -76,12 +70,14 @@
     <table>
 
         <thead>
-            <tr>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
+          <tr>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Subscription</th>
+    <th>Trial End</th>
+    <th>Status</th>
+    <th>Action</th>
+       </tr>
         </thead>
 
         <tbody id="hrTable"></tbody>
@@ -89,7 +85,25 @@
     </table>
 
 </div>
+<!-- HR DETAILS MODAL -->
 
+<div id="hrModal" class="modal">
+
+    <div class="modal-content">
+
+        <span
+        class="close"
+        onclick="closeModal()">
+        &times;
+        </span>
+
+        <h2>HR Details</h2>
+
+        <div id="hrDetails"></div>
+
+    </div>
+
+</div>
 <script src="admin.js"></script>
 
 </body>

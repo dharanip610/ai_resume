@@ -1,85 +1,175 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
+
 <html>
 
 <head>
-    <title>Candidates</title>
 
-    <link rel="stylesheet" href="style.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Candidates</title>
+
+<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="candidate.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
 </head>
 
 <body>
 
-    <!-- NAV -->
+<nav>
 
-   <nav>
+    <div class="logo">
+        ATS Pro
+    </div>
+
     <a href="dashboard.html">Dashboard</a>
     <a href="upload.html">Upload</a>
-    <a href="candidates.html">Candidates</a>
+    <a href="candidates.html" class="active">Candidates</a>
     <a href="analyze-jd.html">JD Analyzer</a>
-    <a href="#" onclick="logout()">Logout</a>
+
+    <div class="nav-right">
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
+
 </nav>
 
-    <!-- SEARCH -->
+<div class="page-container">
 
-    <div class="controls">
+
+<div class="page-header">
+
+    <h1>Candidates</h1>
+
+    <p>
+        Manage and track all candidates
+    </p>
+
+</div>
+
+<div class="top-actions">
 
     <input
         type="text"
         id="searchInput"
-        placeholder="Search by name, email, skills..."
+        placeholder="🔍 Search Candidate..."
     >
 
-    <select id="statusFilter">
-
-        <option value="">
-            All Status
-        </option>
-
-        <option value="New">
-            New
-        </option>
-
-        <option value="Contacted">
-            Contacted
-        </option>
-
-        <option value="Interview Scheduled">
-            Interview Scheduled
-        </option>
-
-        <option value="Selected">
-            Selected
-        </option>
-
-        <option value="Rejected">
-            Rejected
-        </option>
-
-        <option value="On Hold">
-            On Hold
-        </option>
-
-    </select>
-
-    <input
-        type="text"
-        id="locationFilter"
-        placeholder="Filter by Location"
+    <button
+        class="filter-btn"
+        onclick="openFilterPanel()"
     >
+        Filters
+    </button>
 
-    <input
-        type="text"
-        id="yearFilter"
-        placeholder="Passout Year"
+    <button
+        class="export-btn"
+        onclick="exportExcel()"
     >
+        Export Excel
+    </button>
 
-    <input
-        type="text"
-        id="experienceFilter"
-        placeholder="Experience"
+</div>
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>Name</th>
+
+            <th>Email</th>
+
+            <th>Phone</th>
+
+
+            <th>ATS Score</th>
+
+            <th>Status</th>
+
+            <th>Action</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody id="candidateTable"></tbody>
+
+</table>
+
+
+</div>
+
+<div
+    id="filterPanel"
+    class="filter-panel"
+>
+
+
+<div class="filter-header">
+
+    <h3>
+        Filter Candidates
+    </h3>
+
+    <span
+        class="close-filter"
+        onclick="closeFilterPanel()"
     >
+        ✖
+    </span>
+
+</div>
+
+<input
+    type="text"
+    id="nameFilter"
+    placeholder="Name"
+>
+
+<input
+    type="text"
+    id="emailFilter"
+    placeholder="Email"
+>
+
+<input
+    type="text"
+    id="phoneFilter"
+    placeholder="Phone"
+>
+
+<input
+    type="text"
+    id="locationFilter"
+    placeholder="Location"
+>
+
+<input
+    type="text"
+    id="collegeFilter"
+    placeholder="College"
+>
+
+<input
+    type="text"
+    id="skillsFilter"
+    placeholder="Skills"
+>
+
+<input
+    type="text"
+    id="yearFilter"
+    placeholder="Passout Year"
+>
+
+<input
+    type="text"
+    id="experienceFilter"
+    placeholder="Experience"
+>
+
 <input
     type="text"
     id="internshipFilter"
@@ -92,84 +182,77 @@
     placeholder="Certification"
 >
 
-<textarea id="notes"></textarea>
+<select id="statusFilter">
 
-<input
-    type="date"
-    id="followup_date">
+    <option value="">
+        All Status
+    </option>
 
-<button>
-    Save
+    <option value="New">
+        New
+    </option>
+
+    <option value="Contacted">
+        Contacted
+    </option>
+
+    <option value="Interview Scheduled">
+        Interview Scheduled
+    </option>
+
+    <option value="Selected">
+        Selected
+    </option>
+
+    <option value="Rejected">
+        Rejected
+    </option>
+
+    <option value="On Hold">
+        On Hold
+    </option>
+
+</select>
+
+<button
+    class="apply-filter-btn"
+    onclick="applyFilters()"
+>
+    Apply Filters
 </button>
-    <button onclick="loadCandidates()">
-        Refresh
-    </button>
 
 </div>
 
-    <!-- TABLE -->
+<div
+    id="candidateModal"
+    class="modal"
+>
 
-    <table>
 
-        <thead>
+<div class="modal-content">
 
-            <tr>
-
-                <th>Name</th>
-
-                <th>Email</th>
-
-                <th>Phone</th>
-
-                <th>Location</th>
-
-                <th>Passout Year</th>
-
-                <th>College</th>
-                <th>Skills</th>
-                <th>ATS Score</th>
-<th class="center-col">Status</th>
-<th class="center-col">Action</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody id="candidateTable"></tbody>
-
-    </table>
-
-    <!-- =========================
-         CANDIDATE MODAL
-    ========================= -->
-
-    <div
-        id="candidateModal"
-        class="modal"
+    <span
+        class="close"
+        onclick="closeModal()"
     >
+        &times;
+    </span>
 
-        <div class="modal-content">
+    <h2>
+        Candidate Profile
+    </h2>
 
-            <span
-                class="close"
-                onclick="closeModal()"
-            >
-                &times;
-            </span>
+    <div id="modalBody"></div>
 
-            <h2>
-                Candidate Details
-            </h2>
+</div>
 
-            <div id="modalBody"></div>
 
-        </div>
+</div>
 
-    </div>
+
 
     <!-- JS -->
-
-    <script src="app.js"></script>
+    <script src="candidates.js"></script>
 
 </body>
 

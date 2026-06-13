@@ -15,8 +15,8 @@ html {
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background:#f8fafc;
-    color: #dce1e6;
+    background: #0f172a;
+    color: #f8fafc;
     min-height: 100vh;
     line-height: 1.5;
 }
@@ -164,6 +164,55 @@ nav{
     border: 1px solid #334155;
 }
 
+/* ===================================================== */
+/* LOGIN */
+/* ===================================================== */
+
+.login-container {
+    width: 420px;
+    max-width: 95%;
+    margin: 80px auto;
+    padding: 40px;
+    background: #1e293b;
+    border-radius: 18px;
+    border: 1px solid #334155;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.login-container h1 {
+    color: #38bdf8;
+    margin-bottom: 10px;
+}
+
+.login-container p {
+    color: #94a3b8;
+    margin-bottom: 20px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+.login-container button:hover {
+    background: #2563eb;
+}
 
 /* ===================================================== */
 /* CONTAINER */
@@ -731,619 +780,4 @@ td{
     justify-content:center;
     align-items:center;
     gap:8px;
-}
-/* ==========================================
-   LOGIN PAGE V2
-========================================== */
-
-.login-wrapper{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#f8fafc;
-    padding:20px;
-}
-
-.login-card{
-    width:420px;
-    max-width:100%;
-    background:white;
-    border:1px solid #e5e7eb;
-    border-radius:18px;
-    padding:40px;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
-}
-
-.login-card h1{
-    color:#2563eb;
-    margin-bottom:10px;
-}
-
-.login-subtitle{
-    color:#6b7280;
-    margin-bottom:25px;
-}
-
-.login-card input{
-    width:100%;
-    padding:14px;
-    margin-bottom:15px;
-    border:1px solid #d1d5db;
-    border-radius:10px;
-    background:white;
-    color:#111827;
-    background:white;
-}
-
-.login-card input:focus{
-    outline:none;
-    border-color:#2563eb;
-}
-
-.primary-btn{
-    width:100%;
-    background:#2563eb;
-    color:white;
-    padding:14px;
-    border:none;
-    border-radius:10px;
-    font-weight:600;
-    cursor:pointer;
-}
-
-.primary-btn:hover{
-    background:#1d4ed8;
-}
-
-.secondary-btn{
-    width:100%;
-    background:white;
-    color:#2563eb;
-    border:1px solid #2563eb;
-    padding:14px;
-    border-radius:10px;
-    margin-top:12px;
-    font-weight:600;
-    cursor:pointer;
-}
-
-.secondary-btn:hover{
-    background:#eff6ff;
-}
-
-.login-features{
-    margin-top:25px;
-    color:#6b7280;
-    font-size:14px;
-    line-height:1.6;
-}
-/* ==========================================
-   ADMIN DASHBOARD V2
-========================================== */
-
-.card h3{
-    color:#64748b;
-    margin-bottom:10px;
-}
-
-.card h2{
-    color:#2563eb;
-    font-size:32px;
-}
-
-#pendingOnboarding,
-#pendingDemo{
-    color:#2563eb;
-}
-/* =====================================
-   REQUEST PAGES
-===================================== */
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-}
-
-thead{
-    background:#0f172a;
-}
-
-thead th{
-    color:white;
-    padding:18px;
-    text-align:left;
-}
-
-tbody tr{
-    background:#1e293b;
-}
-
-tbody td{
-    padding:18px;
-    color:white;
-    border-top:1px solid #334155;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:40px;
-}
-
-.header h1{
-    color:#38bdf8;
-    font-size:48px;
-    margin-bottom:10px;
-}
-
-.header p{
-    color:white;
-    font-size:18px;
-}
-
-table button{
-    background:#3b82f6;
-    border:none;
-    color:white;
-    padding:10px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    margin-right:8px;
-    font-weight:600;
-}
-
-table button:hover{
-    background:#2563eb;
-}
-
-/* Reject Button */
-
-.reject-btn{
-    background:#ef4444;
-}
-
-.reject-btn:hover{
-    background:#dc2626;
-}
-.action-buttons{
-
-display:flex;
-
-gap:10px;
-
-align-items:center;
-
-justify-content:center;
-
-}
-
-.action-buttons button{
-
-margin:0;
-
-}
-.subscription-badge{
-
-    background:#fef3c7;
-
-    color:#92400e;
-
-    padding:6px 12px;
-
-    border-radius:20px;
-
-    font-size:13px;
-
-    font-weight:600;
-
-}
-.candidate-card{
-
-    background:#f8fafc;
-
-    padding:15px;
-
-    border-radius:12px;
-
-    margin-bottom:15px;
-
-}
-
-.candidate-badges{
-
-    display:flex;
-
-    gap:10px;
-
-    margin-bottom:20px;
-
-}
-
-.ats-badge{
-
-    background:#dbeafe;
-
-    color:#1d4ed8;
-
-    padding:8px 15px;
-
-    border-radius:20px;
-
-    font-weight:600;
-
-}
-
-.status-badge{
-
-    background:#dcfce7;
-
-    color:#15803d;
-
-    padding:8px 15px;
-
-    border-radius:20px;
-
-    font-weight:600;
-
-}
-
-.guide-box{
-
-    background:#eff6ff;
-
-    padding:12px;
-
-    border-radius:8px;
-
-    margin-bottom:15px;
-
-}
-.detail-grid{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(2,1fr);
-
-    gap:20px;
-
-    margin:20px 0;
-
-}
-
-.detail-grid label{
-
-    color:#3b82f6;
-
-    font-weight:600;
-
-}
-
-.detail-grid p{
-
-    margin-top:5px;
-
-}
-
-.skills-box{
-
-    background:#0f172a;
-
-    padding:15px;
-
-    border-radius:10px;
-
-    margin:15px 0;
-
-}
-
-.action-buttons{
-
-    display:flex;
-
-    gap:12px;
-
-    margin-top:20px;
-
-}
-
-.action-buttons button{
-
-    padding:10px 18px;
-
-    border:none;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-}
-.top-actions{
-
-    display:flex;
-    gap:15px;
-    align-items:center;
-    margin:20px 0;
-
-}
-
-.top-actions input{
-
-    flex:1;
-
-}
-
-.filter-panel{
-
-    position:fixed;
-    top:0;
-    right:-400px;
-
-    width:350px;
-    height:100%;
-
-    background:#16233b;
-
-    padding:25px;
-
-    transition:0.3s;
-
-    z-index:9999;
-
-    overflow:auto;
-
-}
-
-.filter-panel input,
-.filter-panel select{
-
-    width:100%;
-
-    margin-bottom:12px;
-
-}
-
-.filter-header{
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    margin-bottom:20px;
-
-}
-/* ==========================================
-   CANDIDATES PAGE V2
-========================================== */
-
-.page-container{
-
-    width:95%;
-    max-width:1400px;
-    margin:auto;
-    padding:20px;
-
-}
-
-.page-header{
-
-    margin-bottom:20px;
-
-}
-
-.page-header h1{
-
-    font-size:34px;
-    color:#ffffff;
-
-}
-
-.page-header p{
-
-    color:#94a3b8;
-    margin-top:5px;
-
-}
-
-.top-actions{
-
-    display:flex;
-    gap:12px;
-    align-items:center;
-    margin-bottom:25px;
-
-}
-
-.top-actions input{
-
-    flex:1;
-}
-
-.filter-btn,
-.export-btn{
-
-    background:#2563eb;
-    color:white;
-
-    border:none;
-
-    padding:12px 18px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-}
-
-.filter-btn:hover,
-.export-btn:hover{
-
-    background:#1d4ed8;
-
-}
-
-/* TABLE */
-
-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    background:#82868c;
-
-    border-radius:12px;
-
-    overflow:hidden;
-
-}
-
-thead{
-
-    background:#111827;
-
-}
-
-thead th{
-
-    padding:16px;
-    color:white;
-
-}
-
-tbody td{
-
-    padding:16px;
-
-}
-
-tbody tr:hover{
-
-    background:#273449;
-
-}
-
-/* ACTION ICON */
-
-.view-btn{
-
-    width:42px;
-    height:42px;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:#2563eb;
-
-    border:none;
-
-    border-radius:10px;
-
-    color:white;
-
-    cursor:pointer;
-
-}
-
-.view-btn:hover{
-
-    background:#1d4ed8;
-
-}
-
-/* FILTER PANEL */
-
-.filter-panel{
-
-    position:fixed;
-
-    top:0;
-    right:-420px;
-
-    width:380px;
-    height:100vh;
-
-    background:#16213e;
-
-    padding:25px;
-
-    transition:.3s;
-
-    z-index:99999;
-
-    overflow-y:auto;
-
-    box-shadow:
-    -10px 0 25px rgba(0,0,0,.3);
-
-}
-
-.filter-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:20px;
-
-}
-
-.filter-header h3{
-
-    color:white;
-
-}
-
-.close-filter{
-
-    cursor:pointer;
-
-    font-size:22px;
-
-}
-
-.filter-panel input,
-.filter-panel select{
-
-    width:100%;
-
-    margin-bottom:12px;
-
-}
-
-.apply-filter-btn{
-
-    width:100%;
-
-    margin-top:10px;
-
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-    .top-actions{
-
-        flex-direction:column;
-
-    }
-
-    .top-actions input{
-
-        width:100%;
-
-    }
-
-    .filter-panel{
-
-        width:100%;
-
-    }
-
 }

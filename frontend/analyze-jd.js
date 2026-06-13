@@ -1,4 +1,4 @@
-const API_BASE = "https://ai-resume-xbi6.onrender.com";
+const API_BASE = "https://127.0.0.1:8000";
 
 async function analyzeJD() {
 

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Employee Onboarding</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <h1>Employee Registration</h1>
+
+        <p class="login-subtitle">
+    Complete the registration form to request platform access
+</p>
+
+        <input
+            type="text"
+            id="fullName"
+            placeholder="Full Name">
+
+        <input
+            type="text"
+            id="companyName"
+            placeholder="Company Name">
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Work Email">
+
+        <input
+            type="text"
+            id="phone"
+            placeholder="Phone Number">
+
+        <input
+            type="text"
+            id="designation"
+            placeholder="Designation">
+
+        <input
+            type="text"
+            id="experience"
+            placeholder="Experience">
+
+        <label
+            style="
+                display:block;
+                text-align:left;
+                margin-top:15px;
+                margin-bottom:8px;
+                font-weight:600;
+                color:#374151;
+                font-size:14px;
+            ">
+           Resume (PDF / DOCX)
+        </label>
+
+        <input
+            type="file"
+            id="resume">
+
+       <label
+    style="
+        display:block;
+        text-align:left;
+        margin-top:15px;
+        margin-bottom:8px;
+        font-weight:600;
+        color:#374151;
+        font-size:14px;
+    ">
+            Certificates (Optional)
+        </label>
+
+        <input
+            type="file"
+            id="certificate">
+
+        <button
+            class="primary-btn"
+            onclick="submitOnboarding()">
+
+            Submit Request
+          <p>By submitting this form,
+you agree to the review and approval process.</p>
+        </button>
+
+        <button
+            class="secondary-btn"
+            onclick="window.location.href='login.html'">
+
+            Back To Login
+
+        </button>
+
+        <div
+            id="msg"
+            style="
+                margin-top:15px;
+                font-weight:bold;
+            ">
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function submitOnboarding() {
+
+    const fullName =
+        document.getElementById("fullName").value;
+
+    const companyName =
+        document.getElementById("companyName").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const phone =
+        document.getElementById("phone").value;
+
+    const designation =
+        document.getElementById("designation").value;
+
+    const experience =
+        document.getElementById("experience").value;
+
+    const msg =
+        document.getElementById("msg");
+
+    try {
+
+        const res = await fetch(
+            "http://127.0.0.1:8000/onboarding-request",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    full_name: fullName,
+                    company_name: companyName,
+                    email: email,
+                    phone: phone,
+                    designation: designation,
+                    experience: experience
+
+                })
+            }
+        );
+
+        const data =
+            await res.json();
+
+        console.log(data);
+
+        if (data.status === "success") {
+
+            msg.style.color =
+                "green";
+
+            msg.innerText =
+                "Request submitted successfully. Waiting for admin approval.";
+
+        } else {
+
+            msg.style.color =
+                "red";
+
+            msg.innerText =
+                data.error || "Submission failed";
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        msg.style.color =
+            "red";
+
+        msg.innerText =
+            "Server error";
+    }
+}
+
+</script>
+
+</body>
+
+</html>

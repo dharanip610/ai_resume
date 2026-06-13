@@ -1,4 +1,4 @@
-const API_BASE = "https://ai-resume-xbi6.onrender.com";
+const API_BASE = "https://127.0.0.1:8000";
 
 let candidates = [];
 
@@ -9,75 +9,65 @@ async function loadDashboard() {
 
     try {
 
-        const token = localStorage.getItem(
-            "access_token"
-        );
-
-        console.log(
-            "TOKEN =",
-            token
-        );
-
-        if (!token) {
-
-            alert("Login required");
-
-            window.location.href =
-                "login.html";
-
-            return;
-        }
+        const token =
+            localStorage.getItem("access_token");
 
         const res = await fetch(
-            `${API_BASE}/resumes`,
+            `${API_BASE}/dashboard`,
             {
-                method: "GET",
                 headers: {
-                    "Authorization":
-                        "Bearer " + token,
-                    "Content-Type":
-                        "application/json"
+                    Authorization:
+                        "Bearer " + token
                 }
             }
         );
 
-        const data = await res.json();
+        const result =
+            await res.json();
 
-        console.log(
-            "STATUS =",
-            res.status
-        );
+        console.log(result);
 
-        console.log(
-            "RESPONSE =",
-            data
-        );
+        const stats =
+            result.data;
 
-        if (!res.ok) {
+        document.getElementById(
+            "totalResumes"
+        ).innerText =
+            stats.total_candidates || 0;
 
-            console.error(
-                "API ERROR =",
-                data
-            );
+        document.getElementById(
+            "newCandidates"
+        ).innerText =
+            stats.new_candidates || 0;
 
-            alert(
-                "Dashboard load failed"
-            );
+        document.getElementById(
+            "selectedCount"
+        ).innerText =
+            stats.selected || 0;
 
-            return;
-        }
+        document.getElementById(
+            "rejectedCount"
+        ).innerText =
+            stats.rejected || 0;
 
-        candidates =
-            data.data || [];
+        document.getElementById(
+            "avgScore"
+        ).innerText =
+            (stats.average_ats_score || 0) + "%";
 
-        updateDashboard();
+        document.getElementById(
+            "analyzedCount"
+        ).innerText =
+            stats.candidates_analyzed || 0;
+
+        document.getElementById(
+            "followupCount"
+        ).innerText =
+            stats.followups_due || 0;
 
     } catch (err) {
 
-        console.error(
-            "FETCH ERROR =",
-            err
-        );
+        console.error(err);
 
         alert(
             "Dashboard load failed"

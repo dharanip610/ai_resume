@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Demo</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <h1>Request Demo</h1>
+
+        <p class="login-subtitle">
+            Request a demo of the AI ATS Platform
+        </p>
+
+        <input
+            type="text"
+            id="fullName"
+            placeholder="Full Name">
+
+        <input
+            type="text"
+            id="companyName"
+            placeholder="Company Name">
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Work Email">
+
+        <input
+            type="text"
+            id="phone"
+            placeholder="Phone Number (Optional)">
+<textarea
+    id="message"
+    placeholder="Message (Optional)"
+    style="
+        width:100%;
+        min-height:120px;
+        padding:14px;
+        border:1px solid #d1d5db;
+        border-radius:10px;
+        resize:vertical;
+        margin-bottom:15px;
+        background:white;
+        color:black;
+    ">
+</textarea>
+
+        <button
+            class="primary-btn"
+            onclick="submitDemo()">
+
+            Submit Demo Request
+
+        </button>
+
+        <button
+            class="secondary-btn"
+            onclick="window.location.href='login.html'">
+
+            Back To Login
+
+        </button>
+
+        <div
+            id="msg"
+            style="
+                margin-top:15px;
+                font-weight:bold;
+            ">
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function submitDemo() {
+
+    const fullName =
+        document.getElementById("fullName").value;
+
+    const companyName =
+        document.getElementById("companyName").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const phone =
+        document.getElementById("phone").value;
+
+    const message =
+        document.getElementById("message").value;
+
+    const msg =
+        document.getElementById("msg");
+
+    try {
+
+        const res = await fetch(
+            "http://127.0.0.1:8000/demo-request",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    full_name: fullName,
+                    company_name: companyName,
+                    email: email,
+                    phone: phone,
+                    message: message
+
+                })
+            }
+        );
+
+        const data =
+            await res.json();
+
+        if (data.status === "success") {
+
+            msg.style.color =
+                "green";
+
+            msg.innerText =
+                "Demo request submitted successfully.";
+
+        } else {
+
+            msg.style.color =
+                "red";
+
+            msg.innerText =
+                data.error || "Request failed";
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        msg.style.color =
+            "red";
+
+        msg.innerText =
+            "Server error";
+    }
+}
+
+</script>
+
+</body>
+
+</html>

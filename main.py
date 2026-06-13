@@ -1,3 +1,5 @@
+from pydoc import text
+
 import PyPDF2
 from docx import Document
 import re
@@ -19,6 +21,7 @@ from services.jd_analyzer import analyze_candidates
 from services.resume_parser import extract_resume_data, calculate_ats_score
 from services.auth import get_current_user, get_user_role
 from pydantic import BaseModel
+from fastapi import Body
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -415,6 +418,9 @@ async def upload_resume(
         # =====================
         # INSERT CANDIDATE
         # =====================
+
+        public_url = supabase.storage.from_("resumes").get_public_url(file_path)
+
         candidate_res = supabase.table("candidates").insert({
             "hr_id": str(user.id),
             "name": parsed.get("name"),
@@ -431,24 +437,19 @@ async def upload_resume(
             "status": "New",
             "ats_score": 0,
             "jd_match_percentage": 0,
-            "resume_url": file_path
+            "resume_url": public_url
         }).execute()
 
         print("DB INSERT RESULT:", candidate_res)
 
-        # =====================
         # GET CANDIDATE ID
-        # =====================
         candidate_id = None
-
-        if candidate_res.data and len(candidate_res.data) > 0:
+        if getattr(candidate_res, 'data', None) and len(candidate_res.data) > 0:
             candidate_id = candidate_res.data[0].get("id")
 
         print("CANDIDATE ID:", candidate_id)
 
-        # =====================
         # INSERT RESUME LINK
-        # =====================
         if candidate_id:
             supabase.table("resume_uploads").insert({
                 "hr_id": str(user.id),
@@ -457,11 +458,7 @@ async def upload_resume(
                 "candidate_id": candidate_id
             }).execute()
 
-        return {
-            "status": "success",
-            "candidate_id": candidate_id,
-            "message": "Upload + DB Save Success"
-        }
+        return {"status": "success", "candidate_id": candidate_id, "message": "Upload + DB Save Success"}
 
     except Exception as e:
         print("UPLOAD FAILED:", str(e))
@@ -1010,6 +1007,11 @@ def get_candidate(
 @app.get("/resumes")
 def get_resumes(user=Depends(get_user)):
 
+    print(
+        "USER ID =",
+        user.id
+    )
+
     role = get_user_role(
         str(user.id)
     )
@@ -1086,10 +1088,35 @@ def admin_stats(
         "candidates"
     ).select("*").execute()
 
+    onboarding = supabase.table(
+        "onboarding_requests"
+    ).select("*").eq(
+        "status",
+        "pending"
+    ).execute()
+
+    demo = supabase.table(
+        "demo_requests"
+    ).select("*").eq(
+        "status",
+        "pending"
+    ).execute()
+
     return {
-        "hr_count": len(hr_users.data or []),
-        "resume_count": len(candidates.data or []),
-        "active_count": len(hr_users.data or [])
+        "hr_count":
+            len(hr_users.data or []),
+
+        "resume_count":
+            len(candidates.data or []),
+
+        "active_count":
+            len(hr_users.data or []),
+
+        "pending_onboarding":
+            len(onboarding.data or []),
+
+        "pending_demo":
+            len(demo.data or [])
     }
 # ==========================================
 # HR users API
@@ -1269,4 +1296,244 @@ def get_hr_users(
         "status": "success",
         "data": result.data or []
     }
+# ==========================================
+# ONBOARDING REQUEST
+# ==========================================
+
+from fastapi import Body
+
+@app.post("/onboarding-request")
+def onboarding_request(
+    payload: dict = Body(...)
+):
+
+    try:
+
+        result = supabase.table(
+            "onboarding_requests"
+        ).insert({
+
+            "full_name":
+                payload.get("full_name"),
+
+            "company_name":
+                payload.get("company_name"),
+
+            "email":
+                payload.get("email"),
+
+            "phone":
+                payload.get("phone"),
+
+            "designation":
+                payload.get("designation"),
+
+            "experience":
+                payload.get("experience"),
+
+            "status":
+                "pending"
+
+        }).execute()
+
+        return {
+            "status": "success",
+            "message": "Request submitted successfully"
+        }
+
+    except Exception as e:
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
+
+
+# ==========================================
+# DEMO REQUEST
+# ==========================================
+
+@app.post("/demo-request")
+def demo_request(
+    payload: dict = Body(...)
+):
+
+    try:
+
+        result = supabase.table(
+            "demo_requests"
+        ).insert({
+
+            "full_name":
+                payload.get("full_name"),
+
+            "company_name":
+                payload.get("company_name"),
+
+            "email":
+                payload.get("email"),
+
+            "phone":
+                payload.get("phone"),
+
+            "message":
+                payload.get("message"),
+
+            "status":
+                "pending"
+
+        }).execute()
+
+        return {
+            "status": "success",
+            "message": "Demo request submitted"
+        }
+
+    except Exception as e:
+
+        return {
+            "status": "failed",
+            "error": str(e)
+        }
+# ==========================================
+# GET ONBOARDING REQUESTS
+# ==========================================
+
+@app.get("/admin/onboarding-requests")
+def get_onboarding_requests(
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "onboarding_requests"
+    ).select("*").eq(
+        "status",
+        "pending"
+    ).execute()
+
+    return {
+        "status": "success",
+        "data": result.data or []
+    }
+
+
+# ==========================================
+# GET DEMO REQUESTS
+# ==========================================
+
+@app.get("/admin/demo-requests")
+def get_demo_requests(
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "demo_requests"
+    ).select("*").eq(
+        "status",
+        "pending"
+    ).execute()
+
+    return {
+        "status": "success",
+        "data": result.data or []
+    }
+
+# ==========================================
+# APPROVE ONBOARDING REQUEST
+# ==========================================
+
+@app.post("/admin/approve-onboarding/{request_id}")
+def approve_onboarding(
+    request_id: int,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    supabase.table(
+        "onboarding_requests"
+    ).update({
+
+        "status":
+            "approved"
+
+    }).eq(
+        "id",
+        request_id
+    ).execute()
+
+    return {
+        "status":
+            "success"
+    }
+
+# ==========================================
+# REJECT ONBOARDING REQUEST
+# ==========================================
+
+@app.post("/admin/reject-onboarding/{request_id}")
+def reject_onboarding(
+    request_id: int,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    supabase.table(
+        "onboarding_requests"
+    ).update({
+
+        "status":
+            "rejected"
+
+    }).eq(
+        "id",
+        request_id
+    ).execute()
+
+    return {
+        "status":
+            "success"
+    }
+
 

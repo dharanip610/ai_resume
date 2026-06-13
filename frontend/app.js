@@ -2,7 +2,7 @@
 // =========================
 // API
 // =========================
-const API_BASE = "https://ai-resume-xbi6.onrender.com";
+const API_BASE = "http://127.0.0.1:8000";
 
 // =========================
 // GLOBAL DATA
@@ -287,134 +287,124 @@ function filterData() {
         );
     }
 
-    render(filtered);
+    renderCandidates(filtered);
 }
 // =========================
 // VIEW CANDIDATE
 // =========================
-function viewCandidate(id) {
+/*function viewCandidate(id){
 
-    const candidate = allCandidates.find(
-        c => c.id === id
-    );
+    const candidate =
+        allCandidates.find(
+            c => c.id === id
+        );
 
-    if (!candidate) return;
+    if(!candidate){
 
-    selectedCandidateId = candidate.id;
+        alert("Candidate not found");
+        return;
+    }
 
-    document.getElementById("modalBody").innerHTML = `
+    document.getElementById(
+        "modalBody"
+    ).innerHTML = `
 
-        <div class="detail-row">
-            <span class="detail-label">Name:</span>
-            ${candidate.name || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>Name:</strong>
+        ${candidate.name || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Email:</span>
-            ${candidate.email || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>Email:</strong>
+        ${candidate.email || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Phone:</span>
-            ${candidate.phone || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>Phone:</strong>
+        ${candidate.phone || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Location:</span>
-            ${candidate.location || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>Location:</strong>
+        ${candidate.location || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">College:</span>
-            ${candidate.college_name || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>College:</strong>
+        ${candidate.college_name || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Passout Year:</span>
-            ${candidate.passout_year || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>Passout Year:</strong>
+        ${candidate.passout_year || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">Skills:</span>
-            ${candidate.skills || "-"}
-        </div>
+    <div class="detail-row">
+        <strong>Skills:</strong>
+        ${candidate.skills || "-"}
+    </div>
 
-        <div class="detail-row">
-            <span class="detail-label">ATS Score:</span>
-            ${candidate.ats_score || 0}%
-        </div>
+    <div class="detail-row">
+        <strong>ATS Score:</strong>
+        ${candidate.ats_score || 0}%
+    </div>
 
-        <hr>
+    <hr>
 
-        <label>Status</label>
+    <label>Status</label>
 
-        <select
-            id="candidateStatus"
-            style="width:100%;padding:8px;margin-top:5px;">
+    <select id="candidateStatus">
 
-            <option value="New">New</option>
-            <option value="Contacted">Contacted</option>
-            <option value="Interview Scheduled">Interview Scheduled</option>
-            <option value="Selected">Selected</option>
-            <option value="Rejected">Rejected</option>
-            <option value="On Hold">On Hold</option>
+        <option value="New">New</option>
+        <option value="Contacted">Contacted</option>
+        <option value="Interview Scheduled">Interview Scheduled</option>
+        <option value="Selected">Selected</option>
+        <option value="Rejected">Rejected</option>
+        <option value="On Hold">On Hold</option>
 
-        </select>
+    </select>
 
-        <br><br>
+    <br><br>
 
-        <label>Remarks</label>
+    <label>Remarks</label>
 
-        <textarea
-            id="candidateRemarks"
-            rows="3"
-            style="width:100%;">
+    <textarea
+        id="candidateRemarks"
+        rows="3"
+    >${candidate.remarks || ""}</textarea>
 
-        </textarea>
+    <br><br>
 
-        <br><br>
+    <label>Internal Notes</label>
 
-        <label>Internal Notes</label>
+    <textarea
+        id="candidateNotes"
+        rows="4"
+    >${candidate.notes || ""}</textarea>
 
-        <textarea
-            id="candidateNotes"
-            rows="3"
-            style="width:100%;">
+    <br><br>
 
-        </textarea>
+    <label>Follow Up Date</label>
 
-        <br><br>
+    <input
+        type="date"
+        id="candidateFollowUp"
+        value="${candidate.followup_date || ""}"
+    >
 
-        <label>Follow Up Date</label>
+    <br><br>
 
-        <input
-            type="date"
-            id="candidateFollowUp"
-            style="width:100%;padding:8px;">
+    <button
+        onclick="downloadResume('${candidate.resume_url || ""}')"
+    >
+        Download Resume
+    </button>
 
-        <br><br>
+    <button>
+        Save Changes
+    </button>
 
-        <div style="text-align:center;">
-
-            <button
-                class="view-btn"
-                onclick="downloadResume('${candidate.resume_url || ""}')">
-
-                 Download Resume
-
-            </button>
-
-            <button
-                class="view-btn"
-                onclick="saveCandidate()">
-
-                 Save Changes
-
-            </button>
-
-        </div>
     `;
-
     document.getElementById(
         "candidateModal"
     ).style.display = "block";
