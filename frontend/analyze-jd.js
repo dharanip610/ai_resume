@@ -1,4 +1,5 @@
-const API_BASE = "https://127.0.0.1:8000";
+ const API_URL =
+"http://127.0.0.1:8000";
 
 async function analyzeJD() {
 
@@ -23,7 +24,7 @@ try {
     console.log("TOKEN:", token);
 
     const res = await fetch(
-        `${API_BASE}/analyze-jd`,
+    `${API_URL}/analyze-jd`,
         {
             method: "POST",
             headers: {

@@ -109,19 +109,25 @@ ${u.subscription_status || "trial"}
 
        <td>
 
-            <button
-               class="view-btn"
-               onclick="viewHR('${u.id}')">
-               View
-            </button>
+    <button
+       class="view-btn"
+       onclick="viewHR('${u.id}')">
+       View
+    </button>
 
-            <button 
-               class="delete-btn"
-               onclick="deleteHR('${u.id}')">
-               Delete
-            </button>
+    <button
+       class="excel-btn"
+       onclick="downloadExcel('${u.id}')">
+       Excel
+    </button>
 
-       </td>
+    <button
+       class="delete-btn"
+       onclick="deleteHR('${u.id}')">
+       Delete
+    </button>
+
+</td>
 
     </tr>`;
        }).join("");
@@ -215,18 +221,25 @@ Authorization:
 
 const data =
 await res.json();
-
+console.log(data);
+console.log(id);
 const hr =
 (data.data || [])
 .find(
 x => x.id === id
 );
 
+console.log("FOUND HR =", hr);
+
 if(!hr){
 alert("HR Not Found");
 return;
 }
-
+console.log(
+    document.getElementById(
+        "hrDetails"
+    )
+);
 document
 .getElementById(
 "hrDetails"
@@ -264,18 +277,32 @@ ${hr.status || "Active"}
 <hr>
 
 <button
-onclick="alert('Extend Trial Coming Soon')">
+class="view-btn"
+onclick="extendTrial('${hr.id}')">
+
 Extend Trial
-</button>
 
 <button
-onclick="alert('Activate Plan Coming Soon')">
+class="view-btn"
+onclick="activatePlan('${hr.id}')">
+
 Activate Plan
+
 </button>
 
 <button
-onclick="alert('Suspend User Coming Soon')">
+class="delete-btn"
+onclick="suspendUser('${hr.id}')">
+
 Suspend User
+
+</button>
+<button
+class="view-btn"
+onclick="activateUser('${hr.id}')">
+
+Activate User
+
 </button>
 
 `;
@@ -311,6 +338,227 @@ document
 "none";
 
 }
+async function downloadExcel(hrId){
 
+    try{
+
+        const token =
+            localStorage.getItem(
+                "access_token"
+            );
+
+        const response =
+            await fetch(
+                `${API_BASE}/admin/export-hr-candidates/${hrId}`,
+                {
+                    headers:{
+                        Authorization:
+                            "Bearer " + token
+                    }
+                }
+            );
+
+        const blob =
+            await response.blob();
+
+        const url =
+            window.URL.createObjectURL(
+                blob
+            );
+
+        const a =
+            document.createElement(
+                "a"
+            );
+
+        a.href = url;
+
+        a.download =
+            "candidates.xlsx";
+
+        a.click();
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        alert(
+            "Download Failed"
+        );
+
+    }
+
+}
+async function extendTrial(hrId){
+
+    try{
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+        const res =
+        await fetch(
+            `${API_BASE}/admin/extend-trial/${hrId}`,
+            {
+                method:"POST",
+                headers:{
+                    Authorization:
+                    "Bearer " + token
+                }
+            }
+        );
+
+        const data =
+        await res.json();
+
+        alert(
+            "Trial Extended Successfully"
+        );
+
+        loadHRUsers();
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        alert(
+            "Failed"
+        );
+
+    }
+
+}
+async function activatePlan(hrId){
+
+
+    try{
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+        await fetch(
+            `${API_BASE}/admin/activate-plan/${hrId}`,
+            {
+                method:"POST",
+                headers:{
+                    Authorization:
+                    "Bearer " + token
+                }
+            }
+        );
+
+        alert(
+            "Plan Activated Successfully"
+        );
+
+        loadAdminData();
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        alert(
+            "Failed"
+        );
+
+    }
+
+}
+async function suspendUser(hrId){
+
+    const ok =
+    confirm(
+        "Suspend this HR?"
+    );
+
+    if(!ok){
+        return;
+    }
+
+    try{
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+        const res =
+        await fetch(
+            `${API_BASE}/admin/suspend-user/${hrId}`,
+            {
+                method:"POST",
+                headers:{
+                    Authorization:
+                    "Bearer " + token
+                }
+            }
+        );
+
+        const data =
+        await res.json();
+
+        alert(
+            "User Suspended Successfully"
+        );
+
+        loadHRUsers();
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        alert(
+            "Failed to Suspend User"
+        );
+
+    }
+
+}
+async function activateUser(hrId){
+
+    try{
+
+        const token =
+        localStorage.getItem(
+            "access_token"
+        );
+
+        await fetch(
+            `${API_BASE}/admin/activate-user/${hrId}`,
+            {
+                method:"POST",
+                headers:{
+                    Authorization:
+                    "Bearer " + token
+                }
+            }
+        );
+
+        alert(
+            "User Activated Successfully"
+        );
+
+        loadHRUsers();
+
+    }
+    catch(err){
+
+        console.error(err);
+
+        alert(
+            "Activation Failed"
+        );
+
+    }
+
+}
 // INIT
-loadAdminData(); 
+loadAdminData();

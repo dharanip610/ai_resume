@@ -7,8 +7,7 @@
 
 <title>Candidates</title>
 
-<link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="candidate.css">
+<link rel="stylesheet" href="hr-candidates.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -16,23 +15,21 @@
 </head>
 
 <body>
-
-<nav>
+<div class="topbar">
 
     <div class="logo">
-        ATS Pro
+         AI Resume ATS
     </div>
 
-    <a href="dashboard.html">Dashboard</a>
-    <a href="upload.html">Upload</a>
-    <a href="candidates.html" class="active">Candidates</a>
-    <a href="analyze-jd.html">JD Analyzer</a>
-
-    <div class="nav-right">
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="upload.html">Upload</a>
+        <a href="analyze-jd.html">JD Analyzer</a>
+        <a href="profile.html">Profile</a>
         <a href="#" onclick="logout()">Logout</a>
-    </div>
+    </nav>
 
-</nav>
+</div>
 
 <div class="page-container">
 
@@ -219,6 +216,12 @@
     onclick="applyFilters()"
 >
     Apply Filters
+</button>
+<button
+    class="reset-filter-btn"
+    onclick="resetFilters()"
+>
+    Reset Filters
 </button>
 
 </div>

@@ -1,4 +1,5 @@
 const API_BASE = "http://127.0.0.1:8000";
+let currentHR = {};
 
 async function loadOnboardingRequests() {
 
@@ -40,6 +41,7 @@ async function loadOnboardingRequests() {
                    <td class="action-buttons">
 
 <button
+class="approve-btn"
 onclick="approveRequest('${r.id}')">
 
 Approve
@@ -54,7 +56,7 @@ Reject
 
 </button>
 
-</td>
+</td> </tr>
             `)
             .join("");
 
@@ -90,11 +92,81 @@ async function approveRequest(id) {
         const data =
             await res.json();
 
-        console.log(data);
-
-        alert(
-            "Request Approved Successfully"
+        console.log(
+            "DATA =",
+            data
         );
+
+        currentHR = {
+
+    full_name:
+        data.full_name,
+
+    company_name:
+        data.company_name,
+
+    email:
+        data.email,
+
+    phone:
+        data.phone,
+
+    password:
+        data.temp_password
+
+};
+
+        document
+        .getElementById(
+            "credentialBody"
+        ).innerHTML = `
+
+        <p>
+            <b>Name:</b>
+            ${currentHR.full_name}
+        </p>
+
+        <p>
+            <b>Company:</b>
+            ${currentHR.company_name}
+        </p>
+
+        <p>
+            <b>Email:</b>
+            ${currentHR.email}
+        </p>
+        <p>
+            <b>Phone:</b>
+            ${currentHR.phone}
+        </p>
+
+        <p>
+            <b>Password:</b>
+            ${currentHR.password}
+        </p>
+
+        <br>
+
+        <button onclick="shareWhatsApp('${currentHR.email}','${currentHR.password}')">
+            📱 WhatsApp
+        </button>
+
+        <button onclick="shareEmail('${currentHR.email}','${currentHR.password}')">
+            ✉ Email
+        </button>
+
+        <button onclick="copyCredentials('${currentHR.email}','${currentHR.password}')">
+            📋 Copy Credentials
+        </button>
+
+        `;
+
+        document
+        .getElementById(
+            "credentialModal"
+        )
+        .style.display =
+            "flex";
 
         loadOnboardingRequests();
 
@@ -131,13 +203,13 @@ async function rejectRequest(id) {
         const data =
             await res.json();
 
-        console.log(data);
+    console.log(data);
 
-        alert(
-            "Request Rejected Successfully"
-        );
+alert(
+    "Request Rejected Successfully"
+);
 
-        loadOnboardingRequests();
+loadOnboardingRequests();    
 
     } catch (err) {
 
@@ -150,4 +222,101 @@ async function rejectRequest(id) {
 }
 
 loadOnboardingRequests();
+function copyCredentials(
+    email,
+    password
+){
 
+    const text =
+
+`Email: ${email}
+
+Password: ${password}`;
+
+    navigator.clipboard.writeText(
+        text
+    );
+
+    alert(text);
+
+}
+function shareWhatsApp(
+    email,
+    password
+){
+
+    const message =
+    encodeURIComponent(
+
+`Hi,
+
+Your ATS account has been created.
+
+Login URL:
+http://localhost:5500/login.html
+
+Email:
+${email}
+
+Password:
+${password}
+
+Please change your password after login.
+
+Regards,
+ATS Team`
+
+    );
+
+window.open(
+    `https://wa.me/91${currentHR.phone}?text=${message}`,
+    "_blank"
+);
+
+}
+function shareEmail(
+    email,
+    password
+){
+
+    const subject =
+    encodeURIComponent(
+        "ATS Login Credentials"
+    );
+
+    const body =
+    encodeURIComponent(
+
+`Hi,
+
+Your ATS account has been created.
+
+Login URL:
+http://localhost:5500/login.html
+
+Email:
+${email}
+
+Password:
+${password}
+
+Please change your password after login.
+
+Regards,
+ATS Team`
+
+    );
+
+    window.location.href =
+    `mailto:${email}?subject=${subject}&body=${body}`;
+
+}
+function closeCredentialModal(){
+
+    document
+    .getElementById(
+        "credentialModal"
+    )
+    .style.display = "none";
+
+}

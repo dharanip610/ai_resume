@@ -2,146 +2,7 @@
 <html>
 <head>
     <title>AI Resume ATS Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        body{
-            margin:0;
-            font-family:'Segoe UI',sans-serif;
-            background:#0f172a;
-            color:white;
-        }
-
-        .topbar{
-            background:#7a8db7;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:18px 30px;
-            border-bottom:1px solid #1e293b;
-        }
-
-        .logo{
-            font-size:22px;
-            font-weight:700;
-        }
-
-        nav a{
-            color:#e5e7eb;
-            text-decoration:none;
-            margin-left:20px;
-            transition:0.3s;
-        }
-
-        nav a:hover{
-            color:#38bdf8;
-        }
-
-        .header{
-            padding:30px;
-        }
-
-        .header h1{
-            margin:0;
-            font-size:34px;
-        }
-
-        .header p{
-            color:#94a3b8;
-        }
-
-        .cards{
-            display:grid;
-            grid-template-columns:repeat(4,1fr);
-            gap:20px;
-            padding:0 30px 30px;
-        }
-
-        .card{
-            background:#1e293b;
-            padding:25px;
-            border-radius:16px;
-            box-shadow:0 8px 20px rgba(0,0,0,.25);
-            transition:.3s;
-        }
-
-        .card:hover{
-            transform:translateY(-4px);
-        }
-
-        .card h3{
-            margin:0;
-            color:#cbd5e1;
-            font-size:14px;
-        }
-
-        .card h2{
-            margin-top:15px;
-            font-size:34px;
-        }
-
-        .section{
-            background:#1e293b;
-            margin:0 30px 30px;
-            padding:25px;
-            border-radius:16px;
-        }
-
-        .section h2{
-            margin-top:0;
-        }
-
-        .actions{
-            display:flex;
-            gap:15px;
-            flex-wrap:wrap;
-        }
-
-        .action-btn{
-            background:#2563eb;
-            color:white;
-            border:none;
-            padding:12px 20px;
-            border-radius:10px;
-            cursor:pointer;
-            font-weight:600;
-            transition:.3s;
-        }
-
-        .action-btn:hover{
-            background:#1d4ed8;
-        }
-
-        .total{ color:#38bdf8; }
-        .new{ color:#facc15; }
-        .selected{ color:#22c55e; }
-        .rejected{ color:#ef4444; }
-
-        @media(max-width:900px){
-            .cards{
-               grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr)); 
-            }
-
-            .topbar{
-                flex-direction:column;
-                gap:10px;
-            }
-        }
-
-        @media(max-width:600px){
-            .cards{
-               grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
-            }
-
-            nav{
-                display:flex;
-                flex-wrap:wrap;
-                justify-content:center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="hr-dashboard.css">
 </head>
 
 <body>
@@ -149,14 +10,14 @@ repeat(auto-fit,minmax(220px,1fr));
 <div class="topbar">
 
     <div class="logo">
-        🧠 AI Resume ATS
+         AI Resume ATS
     </div>
 
     <nav>
-        <a href="dashboard.html">Dashboard</a>
         <a href="upload.html">Upload</a>
         <a href="candidates.html">Candidates</a>
         <a href="analyze-jd.html">JD Analyzer</a>
+            <a href="profile.html">Profile</a>
         <a href="#" onclick="logout()">Logout</a>
     </nav>
 
@@ -226,6 +87,11 @@ repeat(auto-fit,minmax(220px,1fr));
             class="action-btn"
             onclick="location.href='analyze-jd.html'">
             🎯 JD Analyzer
+        </button>
+        <button
+            class="action-btn"
+            onclick="location.href='profile.html'">
+            Profile
         </button>
 
        <button

@@ -8,7 +8,8 @@ import os
 from datetime import datetime
 import io
 import pandas as pd
-
+import random
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, UploadFile, File, Depends, Header, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.responses import RedirectResponse
@@ -22,6 +23,7 @@ from services.resume_parser import extract_resume_data, calculate_ats_score
 from services.auth import get_current_user, get_user_role
 from pydantic import BaseModel
 from fastapi import Body
+from datetime import date, timedelta
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -871,6 +873,7 @@ def export_csv(
     result = query.execute()
 
     data = result.data or []
+
     if location:
         data = [
             x for x in data
@@ -893,22 +896,66 @@ def export_csv(
         ]
 
     df = pd.DataFrame(data)
+    if "followup_date" in df.columns:
+        df["followup_date"] = pd.to_datetime(
+            df["followup_date"],
+            errors="coerce"
+        ).dt.strftime("%d-%m-%Y")
 
-    stream = io.StringIO()
+        df["followup_date"] = (
+            df["followup_date"]
+            .fillna("")
+        )
+    export_columns = [
+        "name",
+        "email",
+        "phone",
+        "location",
+        "college_name",
+        "passout_year",
+        "skills",
+        "status",
+        "remarks",
+        "ats_score",
+        "jd_match_percentage",
+        "followup_date"
+    ]
 
-    df.to_csv(
-        stream,
+    df = df.reindex(columns=export_columns)
+
+    if "phone" in df.columns:
+        df["phone"] = "'" + df["phone"].fillna("").astype(str)
+
+    for col in df.columns:
+        df[col] = (
+            df[col]
+            .fillna("")
+            .astype(str)
+            .str.replace("\n", " ", regex=False)
+            .str.replace("\r", " ", regex=False)
+        )
+
+    output = io.BytesIO()
+
+    csv_content = df.to_csv(
         index=False
     )
 
+    output.write(
+        csv_content.encode("utf-8-sig")
+    )
+
+    output.seek(0)
+
     return StreamingResponse(
-        iter([stream.getvalue()]),
-        media_type="text/csv",
+        output,
+        media_type="text/csv; charset=utf-8",
         headers={
             "Content-Disposition":
             "attachment; filename=candidates.csv"
         }
     )
+    
 # =========================
 # CANDIDATE STATUS UPDATE
 # =========================
@@ -1087,6 +1134,10 @@ def admin_stats(
     candidates = supabase.table(
         "candidates"
     ).select("*").execute()
+    print(
+    "CANDIDATES =",
+    len(candidates.data or [])
+)
 
     onboarding = supabase.table(
         "onboarding_requests"
@@ -1463,7 +1514,6 @@ def get_demo_requests(
 # ==========================================
 # APPROVE ONBOARDING REQUEST
 # ==========================================
-
 @app.post("/admin/approve-onboarding/{request_id}")
 def approve_onboarding(
     request_id: int,
@@ -1481,23 +1531,119 @@ def approve_onboarding(
             detail="Admin only"
         )
 
+    request_data = supabase.table(
+        "onboarding_requests"
+    ).select("*").eq(
+        "id",
+        request_id
+    ).single().execute()
+
+    print(
+        "REQUEST DATA:",
+        request_data.data
+    )
+
+    temp_password = (
+        "HR@" +
+        str(random.randint(1000, 9999))
+    )
+
+    print(
+        "TEMP PASSWORD:",
+        temp_password
+    )
+
+    try:
+        auth_user = supabase.auth.admin.create_user({
+            "email": request_data.data["email"],
+            "password": temp_password,
+            "email_confirm": True
+        })
+
+        print(
+            "AUTH USER CREATED:",
+            auth_user
+        )
+
+        user_id = auth_user.user.id
+
+        supabase.table("profiles").insert({
+
+            "id": str(user_id),
+
+            "email":
+                request_data.data["email"],
+
+            "role":
+                "hr",
+
+            "full_name":
+                request_data.data["full_name"],
+
+            "company_name":
+                request_data.data["company_name"],
+
+            "phone":
+                request_data.data["phone"],
+
+            "designation":
+                request_data.data["designation"],
+
+            "trial_start_date":
+                date.today().isoformat(),
+
+            "trial_end_date":
+                (
+                    date.today() +
+                    timedelta(days=3)
+                ).isoformat(),
+
+            "subscription_status":
+                "trial"
+
+        }).execute()
+
+        print("PROFILE CREATED")
+
+    except Exception as e:
+
+        print(
+            "USER CREATE ERROR:",
+            str(e)
+        )
+
+        return {
+            "status": "failed",
+            "message": str(e)
+        }
+
     supabase.table(
         "onboarding_requests"
     ).update({
-
-        "status":
-            "approved"
-
+        "status": "approved"
     }).eq(
         "id",
         request_id
     ).execute()
 
     return {
-        "status":
-            "success"
-    }
+    "status": "success",
 
+    "full_name":
+        request_data.data["full_name"],
+
+    "company_name":
+        request_data.data["company_name"],
+
+    "email":
+        request_data.data["email"],
+        
+    "phone":
+        request_data.data["phone"],        
+        
+    "temp_password":
+        temp_password
+}
 # ==========================================
 # REJECT ONBOARDING REQUEST
 # ==========================================
@@ -1535,5 +1681,448 @@ def reject_onboarding(
         "status":
             "success"
     }
+@app.post("/admin/contact-demo/{request_id}")
+def contact_demo(
+    request_id: int,
+    user=Depends(get_current_user)
+):
 
+    role = get_user_role(str(user.id))
 
+    if role != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    supabase.table(
+        "demo_requests"
+    ).update({
+        "status": "contacted"
+    }).eq(
+        "id",
+        request_id
+    ).execute()
+
+    return {
+        "status": "success"
+    }
+@app.post("/admin/reject-demo/{request_id}")
+def reject_demo(
+    request_id: int,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(str(user.id))
+
+    if role != "admin":
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    supabase.table(
+        "demo_requests"
+    ).update({
+        "status": "rejected"
+    }).eq(
+        "id",
+        request_id
+    ).execute()
+
+    return {
+        "status": "success"
+    }
+@app.get("/admin/export-hr-candidates/{hr_id}")
+def export_hr_candidates(
+    hr_id: str,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "candidates"
+    ).select("*").eq(
+        "hr_id",
+        hr_id
+    ).execute()
+
+    candidates = result.data or []
+
+    if not candidates:
+
+        raise HTTPException(
+            status_code=404,
+            detail="No candidates found"
+        )
+
+    rows = []
+
+    for c in candidates:
+
+        rows.append({
+
+            "Name":
+                c.get("name"),
+
+            "Email":
+                c.get("email"),
+
+            "Phone":
+                c.get("phone"),
+
+            "College":
+                c.get("college_name"),
+
+            "Skills":
+                c.get("skills"),
+
+            "ATS Score":
+                c.get("ats_score"),
+
+            "Status":
+                c.get("status"),
+
+            "Resume":
+                c.get("resume_url")
+
+        })
+
+    df = pd.DataFrame(rows)
+
+    file_name = f"{hr_id}_candidates.xlsx"
+
+    df.to_excel(
+        file_name,
+        index=False
+    )
+
+    return FileResponse(
+        path=file_name,
+        filename=file_name,
+        media_type=
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+@app.get("/debug-candidates")
+def debug_candidates():
+
+    result = supabase.table(
+        "candidates"
+    ).select("*").execute()
+
+    return result.data
+class ChangePasswordRequest(BaseModel):
+
+    current_password: str
+
+    new_password: str
+@app.post("/change-password")
+def change_password(
+    data: ChangePasswordRequest,
+    user=Depends(get_current_user)
+):
+
+    try:
+
+        print("EMAIL =", user.email)
+        print("CURRENT =", data.current_password)
+        print("NEW =", data.new_password)
+
+        email = user.email
+
+        verify = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": data.current_password
+        })
+
+        print("VERIFY =", verify)
+        if not verify.user:
+            raise HTTPException(
+                status_code=400,
+                detail="Current password incorrect"
+            )
+
+        supabase.auth.admin.update_user_by_id(
+            str(user.id),
+            {
+                "password": data.new_password
+            }
+        )
+
+        return {
+            "status": "success",
+            "message": "Password Updated Successfully"
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(
+            "PASSWORD ERROR =",
+            str(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
+
+@app.get("/profile")
+def get_profile(
+    user=Depends(get_current_user)
+):
+
+    profile = supabase.table(
+        "profiles"
+    ).select("*").eq(
+        "id",
+        str(user.id)
+    ).single().execute()
+
+    if not profile.data:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Profile not found"
+        )
+
+    resume_result = supabase.table(
+        "candidates"
+    ).select(
+        "id"
+    ).eq(
+        "hr_id",
+        str(user.id)
+    ).execute()
+
+    resume_count = len(
+        resume_result.data or []
+    )
+
+    return {
+        "status": "success",
+
+        "data": {
+
+            "full_name":
+                profile.data.get(
+                    "full_name"
+                ),
+
+            "company_name":
+                profile.data.get(
+                    "company_name"
+                ),
+
+            "email":
+                profile.data.get(
+                    "email"
+                ),
+
+            "phone":
+                profile.data.get(
+                    "phone"
+                ),
+
+            "designation":
+                profile.data.get(
+                    "designation"
+                ),
+
+            "role":
+                profile.data.get(
+                    "role"
+                ),
+
+            "created_at":
+                profile.data.get(
+                    "created_at"
+                ),
+
+            "trial_start_date":
+                profile.data.get(
+                    "trial_start_date"
+                ),
+
+            "trial_end_date":
+                profile.data.get(
+                    "trial_end_date"
+                ),
+        "subscription_status":
+    profile.data.get(
+        "subscription_status"
+    ),
+
+"status":
+    profile.data.get(
+        "status"
+    ),
+
+"resume_count":
+    resume_count
+           
+        }
+    }
+
+@app.post("/admin/extend-trial/{hr_id}")
+def extend_trial(
+    hr_id: str,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(str(user.id))
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    profile = supabase.table(
+        "profiles"
+    ).select("*").eq(
+        "id",
+        hr_id
+    ).single().execute()
+
+    if not profile.data:
+
+        raise HTTPException(
+            status_code=404,
+            detail="HR not found"
+        )
+
+    current_end = date.fromisoformat(
+        profile.data["trial_end_date"]
+    )
+
+    new_end = current_end + timedelta(days=7)
+
+    supabase.table(
+        "profiles"
+    ).update({
+        "trial_end_date":
+        new_end.isoformat()
+    }).eq(
+        "id",
+        hr_id
+    ).execute()
+
+    return {
+        "status": "success",
+        "new_trial_end":
+        new_end.isoformat()
+    }
+@app.post("/admin/activate-plan/{hr_id}")
+def activate_plan(
+    hr_id: str,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    supabase.table(
+        "profiles"
+    ).update({
+
+        "subscription_status":
+        "paid"
+
+    }).eq(
+        "id",
+        hr_id
+    ).execute()
+
+    return {
+        "status":"success"
+    }
+@app.post("/admin/suspend-user/{hr_id}")
+def suspend_user(
+    hr_id: str,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "profiles"
+    ).update({
+
+        "status":"suspended"
+
+    }).eq(
+        "id",
+        hr_id
+    ).execute()
+
+    print("SUSPEND RESULT =", result)
+
+    return {
+        "status":"success"
+    }
+@app.post("/admin/activate-user/{hr_id}")
+def activate_user(
+    hr_id: str,
+    user=Depends(get_current_user)
+):
+
+    role = get_user_role(
+        str(user.id)
+    )
+
+    if role != "admin":
+
+        raise HTTPException(
+            status_code=403,
+            detail="Admin only"
+        )
+
+    result = supabase.table(
+        "profiles"
+    ).update({
+
+        "status":"active"
+
+    }).eq(
+        "id",
+        hr_id
+    ).execute()
+
+    print(
+        "ACTIVATE USER RESULT =",
+        result
+    )
+
+    return {
+        "status":"success"
+    }

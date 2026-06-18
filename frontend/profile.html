@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+
+<div class="profile-container">
+
+    <h2>HR Profile</h2>
+
+    <hr>
+
+    <p><b>Full Name:</b> <span id="fullName"></span></p>
+
+    <p><b>Company:</b> <span id="companyName"></span></p>
+
+    <p><b>Email:</b> <span id="email"></span></p>
+
+    <p><b>Phone:</b> <span id="phone"></span></p>
+
+    <p><b>Designation:</b> <span id="designation"></span></p>
+
+    <hr>
+
+    <h2>Subscription Details</h2>
+
+    <p><b>Subscription:</b> <span id="subscription"></span></p>
+
+    <p><b>Trial End:</b> <span id="trialEnd"></span></p>
+
+    <div class="stats-card">
+
+    <h3>Total Resumes Uploaded</h3>
+
+    <h1 id="resumeCount">
+        0
+    </h1>
+
+</div>
+    <hr>
+
+    <h2>Change Password</h2>
+
+    <div class="form-group">
+
+    <label>Current Password</label>
+
+    <input
+        type="password"
+        id="currentPassword"
+        placeholder="Enter Current Password">
+
+</div>
+
+<div class="form-group">
+
+    <label>New Password</label>
+
+    <input
+        type="password"
+        id="newPassword"
+        placeholder="Enter New Password">
+
+</div>
+
+<div class="form-group">
+
+    <label>Confirm Password</label>
+
+    <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm New Password">
+
+</div>
+
+    <button
+        class="update-btn"
+        onclick="changePassword()">
+
+        Update Password
+
+    </button>
+
+    <p
+        id="msg"
+        class="success-msg">
+    </p>
+
+    <a
+       href="dashboard.html"
+       class="back-btn">
+
+       ← Back to Dashboard
+
+    </a>
+
+</div>
+
+<script src="profile.js"></script>
+
+</body>
+</html>

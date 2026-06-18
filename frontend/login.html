@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Login - AI Resume ATS</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -120,11 +120,14 @@
           const { data: profile } =
     await supabaseClient
         .from("profiles")
-        .select(`
-            role,
-            trial_end_date,
-            subscription_status
-        `)
+        .select(
+`
+role,
+trial_end_date,
+subscription_status,
+status
+`
+)
         .eq("id", user.id)
         .single();  
         console.log("ROLE =", profile.role);
@@ -156,24 +159,50 @@ if (profile.role !== "admin") {
         console.log("TODAY =", today);
 console.log("TRIAL DATE =", trialEnd);
 console.log("TODAY > TRIAL ?", today > trialEnd);
-
+console.log("PROFILE =", profile);
+console.log("ACCOUNT STATUS =", profile.status);
+console.log("SUB STATUS =", profile.subscription_status);  
     const status =
         profile.subscription_status;
+       alert(
+"STATUS = " +
+profile.status
+);
+        if (
+    profile.status ===
+    "suspended"
+){
 
-    if (
-        status !== "paid" &&
-        today > trialEnd
-    ) { console.log("INSIDE VALIDATION");
+    msg.style.color =
+    "red";
 
-        msg.style.color = "red";
+    msg.innerText =
+    "Account Suspended. Contact Admin.";
 
-        msg.innerText =
-            "Your 3-day trial has expired. Please subscribe to continue.";
-alert("TRIAL EXPIRED BLOCK EXECUTED");
-        await supabaseClient.auth.signOut();
+    await supabaseClient
+    .auth
+    .signOut();
 
-        return;
-    }
+    localStorage.clear();
+
+    return;
+}
+if (
+    status !== "paid" &&
+    today > trialEnd
+) {
+
+    await supabaseClient
+    .auth
+    .signOut();
+
+    localStorage.clear();
+
+    window.location.href =
+        "subscription.html";
+
+    return;
+}
 }
 
             localStorage.setItem(

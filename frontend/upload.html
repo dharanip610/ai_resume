@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Upload Resume - ATS</title>
-
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="hr-upload.css">
+    
 </head>
 
 <body>
@@ -15,14 +15,23 @@
 <!-- ================= NAVBAR ================= -->
 <div class="navbar">
 
-    <div class="logo">ATS Upload</div>
+    <div class="logo">
+    AI Resume ATS
+</div>
 
-    <nav>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="upload.html">Upload</a>
-        <a href="candidates.html">Candidates</a>
-        <a href="login.html">Logout</a>
-    </nav>
+ <nav>
+
+<a href="dashboard.html">Dashboard</a>
+
+<a href="candidates.html">Candidates</a>
+
+<a href="analyze-jd.html">JD Analyzer</a>
+
+<a href="profile.html">Profile</a>
+
+<a href="#" onclick="logout()">Logout</a>
+
+</nav>   
 
 </div>
 
@@ -33,7 +42,17 @@
         <h1>Upload Resumes</h1>
         <p>Upload PDF, DOC, DOCX files</p>
     </div>
+    <div class="upload-info">
 
+📄 Supported Formats:
+PDF, DOC, DOCX
+
+<br><br>
+
+   ATS Parsing Enabled
+
+</div>
+<br>
     <!-- ================= UPLOAD BOX ================= -->
     <div class="upload-box">
 

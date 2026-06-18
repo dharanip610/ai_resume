@@ -4,21 +4,37 @@
 
 <head>
     <title>JD Analyzer</title>
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="hr-jd.css">  
 </head>
 
 <body>
 
-<nav>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="upload.html">Upload</a>
-    <a href="candidates.html">Candidates</a>
-    <a href="analyze-jd.html">JD Analyzer</a>
-    <a href="#" onclick="logout()">Logout</a>
-</nav>
+<div class="topbar">
 
+    <div class="logo">
+        AI Resume ATS
+    </div>
+
+    <nav>
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="upload.html">Upload</a>
+
+        <a href="candidates.html">Candidates</a>
+
+        <a href="profile.html">Profile</a>
+
+        <a href="#" onclick="logout()">Logout</a>
+
+    </nav>
+
+</div>
 <div class="container">
 <h1>JD Analyzer</h1>
+<p class="jd-subtitle">
+Match Job Description with Candidates using ATS Scoring
+</p>
 
 <textarea
     id="jobDescription"

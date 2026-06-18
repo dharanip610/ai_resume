@@ -1,0 +1,217 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f4f7fc;
+    color:#405580;
+}
+
+/* NAVBAR */
+
+nav{
+
+    background:white;
+
+    padding:18px 30px;
+
+    display:flex;
+
+    gap:20px;
+
+    box-shadow:
+    0 2px 15px rgba(0,0,0,.08);
+
+}
+
+nav a{
+
+    text-decoration:none;
+
+    color:#657daa;
+
+    font-weight:600;
+
+}
+
+nav a:hover{
+
+    color:#65b1c9;
+
+}
+
+/* CONTAINER */
+
+.container{
+
+    max-width:1200px;
+
+    margin:40px auto;
+
+    padding:20px;
+
+}
+
+/* TITLE */
+
+h1{
+
+    text-align:center;
+
+    color:#405580;
+
+    margin-bottom:25px;
+
+    font-size:42px;
+
+}
+
+/* TEXTAREA */
+
+textarea{
+
+    width:100%;
+
+    padding:18px;
+
+    border:1px solid #dbe4ff;
+
+    border-radius:12px;
+
+    resize:vertical;
+
+    font-size:15px;
+
+    min-height:220px;
+
+}
+
+textarea:focus{
+
+    outline:none;
+
+    border-color:#65b1c9;
+
+}
+
+/* BUTTON */
+
+button{
+
+    background:#405580;
+
+    color:white;
+
+    border:none;
+
+    padding:14px 25px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:600;
+
+}
+
+button:hover{
+
+    background:#65b1c9;
+
+}
+
+/* TABLE */
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:white;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 5px 20px rgba(0,0,0,.08);
+
+}
+
+thead{
+
+    background:#405580;
+
+}
+
+thead th{
+
+    color:white;
+
+    padding:15px;
+
+    text-align:left;
+
+}
+
+tbody td{
+
+    padding:15px;
+
+    border-bottom:
+    1px solid #eef2ff;
+
+}
+
+tbody tr:hover{
+
+    background:#f8fbff;
+
+}
+@media (max-width:768px){
+
+    .topbar{
+        flex-direction:column;
+        gap:15px;
+        padding:15px;
+        text-align:center;
+    }
+
+    nav{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:10px;
+    }
+
+    .container{
+        width:95%;
+        padding:15px;
+    }
+
+    h1{
+        font-size:28px;
+        text-align:center;
+    }
+
+    textarea{
+        width:100%;
+        min-height:200px;
+    }
+
+    button{
+        width:100%;
+    }
+
+    table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+}

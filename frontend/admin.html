@@ -6,24 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Admin Panel - ATS</title>
-
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 
 <body>
 
 <!-- ================= NAVBAR ================= -->
-<div class="navbar">
+<nav>
 
-    <div class="logo">ATS Admin Panel</div>
+    <div class="logo">
+        ATS Admin Panel
+    </div>
 
-    <nav>
-        <a href="onboarding-requests.html"> Onboarding</a>
+    <div class="nav-links">
+        <a href="admin.html">Dashboard</a>
+        <a href="onboarding-requests.html">Onboarding</a>
         <a href="demo-requests.html">Demo Requests</a>
-        <a href="login.html">Logout</a>
-    </nav>
+        <a href="#" onclick="logout()">Logout</a>
+    </div>
 
-</div>
+</nav>
 
 <!-- ================= CONTAINER ================= -->
 <div class="container">
@@ -34,7 +36,6 @@
     </div>
 
     <!-- ================= STATS ================= -->
-
 <div class="cards">
 
     <div class="card">
@@ -52,14 +53,22 @@
         <h2 id="activeCount">0</h2>
     </div>
 
-    <div class="card">
+    <div
+        class="card clickable-card"
+        onclick="window.location.href='onboarding-requests.html'">
+
         <h3>Pending Onboarding</h3>
         <h2 id="pendingOnboarding">0</h2>
+
     </div>
 
-    <div class="card">
+    <div
+        class="card clickable-card"
+        onclick="window.location.href='demo-requests.html'">
+
         <h3>Pending Demo Requests</h3>
         <h2 id="pendingDemo">0</h2>
+
     </div>
 
 </div>

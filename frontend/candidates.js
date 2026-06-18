@@ -1,6 +1,7 @@
 const API_BASE = "http://127.0.0.1:8000";
 
 let allCandidates = [];
+let currentSearch = "";
 let selectedCandidateId = null;
 
 // ===============================
@@ -49,13 +50,52 @@ async function loadCandidates() {
         alert("Failed to load candidates");
     }
 }
+document
+.getElementById("searchInput")
+.addEventListener("input", function () {
 
+    currentSearch =
+        this.value.toLowerCase();
+
+    const filtered =
+        allCandidates.filter(c =>
+
+            (c.name || "")
+            .toLowerCase()
+            .includes(currentSearch)
+
+            ||
+
+            (c.email || "")
+            .toLowerCase()
+            .includes(currentSearch)
+
+            ||
+
+            (c.phone || "")
+            .toLowerCase()
+            .includes(currentSearch)
+        );
+
+    renderCandidates(filtered);
+});
+renderCandidates(filtered);
+function resetFilters() {
+
+    document.getElementById("nameFilter").value = "";
+    document.getElementById("emailFilter").value = "";
+    document.getElementById("phoneFilter").value = "";
+    document.getElementById("statusFilter").value = "";
+
+    renderCandidates(allCandidates);
+}
+closeFilterPanel();
 
 // ===============================
 // RENDER TABLE
 // ===============================
 function renderCandidates(list) {
- alert("CURRENT FILE");
+
     const table =
         document.getElementById(
             "candidateTable"
@@ -76,11 +116,15 @@ function renderCandidates(list) {
 
     table.innerHTML = list.map(c => `
 
-        <tr>
+        <tr class="${
+            currentSearch
+                ? 'highlight-row'
+                : ''
+        }">
 
-            <td>
-                ${c.name || "N/A"}
-            </td>
+            <td class="candidate-name">
+    ${c.name || "N/A"}
+</td>
 
             <td>
                 ${c.email || "N/A"}
@@ -111,6 +155,13 @@ function renderCandidates(list) {
                         onclick="viewCandidate('${c.id}')">
                         View
                     </button>
+                    <button
+    class="contact-btn"
+    onclick="contactCandidate('${c.id}')">
+
+    Contact
+
+</button>
 
                     <button
                         class="delete-btn"
@@ -195,29 +246,62 @@ function setupFilters() {
 // ===============================
 function applyFilters() {
 
-    const searchValue = document.getElementById("searchInput")?.value.toLowerCase() || "";
-    const statusValue = document.getElementById("statusFilter")?.value || "";
+    const nameValue =
+        document.getElementById("nameFilter")
+        ?.value.toLowerCase() || "";
 
-    let filtered = [...allCandidates];
+    const emailValue =
+        document.getElementById("emailFilter")
+        ?.value.toLowerCase() || "";
 
-    // SEARCH FILTER
-    if (searchValue) {
+    const phoneValue =
+        document.getElementById("phoneFilter")
+        ?.value.toLowerCase() || "";
+
+    const statusValue =
+        document.getElementById("statusFilter")
+        ?.value || "";
+
+    let filtered =
+        [...allCandidates];
+
+    if (nameValue) {
+
         filtered = filtered.filter(c =>
-            (c.name || "").toLowerCase().includes(searchValue) ||
-            (c.email || "").toLowerCase().includes(searchValue) ||
-            (c.skills || "").toLowerCase().includes(searchValue)
+            (c.name || "")
+            .toLowerCase()
+            .includes(nameValue)
         );
     }
 
-    // STATUS FILTER
+    if (emailValue) {
+
+        filtered = filtered.filter(c =>
+            (c.email || "")
+            .toLowerCase()
+            .includes(emailValue)
+        );
+    }
+
+    if (phoneValue) {
+
+        filtered = filtered.filter(c =>
+            (c.phone || "")
+            .toString()
+            .toLowerCase()
+            .includes(phoneValue)
+        );
+    }
+
     if (statusValue) {
-        filtered = filtered.filter(c => c.status === statusValue);
+
+        filtered = filtered.filter(c =>
+            c.status === statusValue
+        );
     }
 
     renderCandidates(filtered);
 }
-
-
 // ===============================
 // STATUS FORMAT (FIXED)
 // ===============================
@@ -619,4 +703,79 @@ async function saveCandidate() {
             "Update failed"
         );
     }
+}
+function contactCandidate(id){
+
+    const candidate =
+        allCandidates.find(
+            c => c.id === id
+        );
+
+    if(!candidate){
+
+        alert("Candidate not found");
+        return;
+
+    }
+
+    const phone =
+        candidate.phone || "";
+
+    const email =
+        candidate.email || "";
+
+    const whatsappUrl =
+        `https://wa.me/91${phone}`;
+
+    const mailUrl =
+        `mailto:${email}`;
+
+    document.getElementById("modalBody").innerHTML = `
+
+<div class="contact-popup">
+
+    <h2> Contact Candidate</h2>
+
+    <div class="contact-card">
+
+        <p><strong>Name</strong></p>
+        <span>${candidate.name}</span>
+
+        <p><strong>Phone</strong></p>
+        <span>${phone}</span>
+
+        <p><strong>Email</strong></p>
+        <span>${email}</span>
+
+    </div>
+
+    <div class="contact-actions">
+
+        <a
+            href="${whatsappUrl}"
+            target="_blank"
+            class="whatsapp-btn">
+
+            📱 WhatsApp
+
+        </a>
+
+        <a
+            href="${mailUrl}"
+            class="email-btn">
+
+            ✉ Email
+
+        </a>
+
+    </div>
+
+</div>
+
+`;
+    document.getElementById(
+        "candidateModal"
+    ).style.display =
+    "block";
+
 }
