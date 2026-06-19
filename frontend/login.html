@@ -219,30 +219,31 @@ if (
             msg.innerText =
                 "Login Success 🚀";
 
-           if(profile.role === "admin"){
-
-    msg.style.color = "red";
-
-    msg.innerText =
-    "Please use Admin Login Page";
+        if (profile.role === "admin") {
 
     await supabaseClient.auth.signOut();
 
     localStorage.clear();
 
+    msg.style.color = "red";
+
+    msg.innerText =
+        "Please use Admin Login Page";
+
     return;
 }
 
 msg.style.color = "green";
-msg.innerText = "Login Success 🚀";
+
+msg.innerText =
+    "Login Success 🚀";
 
 setTimeout(() => {
 
     window.location.href =
-    "dashboard.html";
+        "dashboard.html";
 
-},1000); 
-
+}, 1000);    
         } catch (err) {
 
             console.error(err);

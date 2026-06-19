@@ -1,19 +1,15 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - AI Resume ATS</title>
+    <title>Admin Login - AI ATS</title>
+
     <link rel="stylesheet" href="login.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
-<body>
 
 <body>
 
@@ -22,49 +18,34 @@
     <div class="login-card">
 
         <div style="font-size:60px;margin-bottom:10px;">
-            📄
+            🔐
         </div>
 
-        <h1>Admin Login</h1>
+        <h1>Admin Portal</h1>
 
         <p class="login-subtitle">
-            HR Recruitment & Candidate Management
+            Administrator Access Panel
         </p>
 
         <input
             type="email"
             id="email"
-            placeholder="Enter Email">
+            placeholder="Enter Admin Email">
 
         <input
             type="password"
             id="password"
             placeholder="Enter Password">
 
-       <button
-id="loginBtn"
-class="primary-btn">
-Admin Login
-</button>
+        <button
+            id="loginBtn"
+            class="primary-btn">
+
+            Admin Login
+
+        </button>
 
         <div id="msg"></div>
-
-        <button
-            class="secondary-btn"
-            onclick="window.location.href='onboarding.html'">
-            New HR Onboarding
-        </button>
-
-        <button
-            class="secondary-btn"
-            onclick="window.location.href='request-demo.html'">
-            Request Demo
-        </button>
-
-        <div class="login-features">
-            AI Resume Screening • JD Matching
-           Candidate Tracking • 3-Day Free Trial
-        </div>
 
     </div>
 
@@ -72,189 +53,131 @@ Admin Login
 
 <script>
 
-    const supabaseClient = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
         "https://tyznmenzpxstbgyqeppt.supabase.co",
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5em5tZW56cHhzdGJneXFlcHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NzY4NzYsImV4cCI6MjA5NTM1Mjg3Nn0.afpxfRoVezm78D6WG_vOn7w1PVa7lcBZKnYMM479m-0"
     );
 
-    async function login() {
 
-        const email =
-            document.getElementById("email").value.trim();
+async function login() {
 
-        const password =
-            document.getElementById("password").value;
+    const email =
+        document.getElementById("email").value.trim();
 
-        const msg =
-            document.getElementById("msg");
+    const password =
+        document.getElementById("password").value;
 
-        if (!email || !password) {
+    const msg =
+        document.getElementById("msg");
+
+    if (!email || !password) {
+
+        msg.style.color = "red";
+
+        msg.innerText =
+            "Please enter email and password";
+
+        return;
+    }
+
+    msg.style.color = "#2563eb";
+
+    msg.innerText =
+        "Logging in...";
+
+    try {
+
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+            });
+
+        if (error) {
 
             msg.style.color = "red";
+
             msg.innerText =
-                "Please enter email and password";
+                error.message;
 
             return;
         }
 
-        msg.style.color = "#2563eb";
-        msg.innerText = "Logging in...";
+        const user =
+            data.user;
 
-        try {
+        const { data: profile } =
+            await supabaseClient
+                .from("profiles")
+                .select(`
+                    role,
+                    trial_end_date,
+                    subscription_status,
+                    status
+                `)
+                .eq("id", user.id)
+                .single();
 
-            const { data, error } =
-                await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-            if (error) {
-
-                msg.style.color = "red";
-                msg.innerText = error.message;
-                return;
-            }
-
-            const user = data.user;
-
-          const { data: profile } =
-    await supabaseClient
-        .from("profiles")
-        .select(
-`
-role,
-trial_end_date,
-subscription_status,
-status
-`
-)
-        .eq("id", user.id)
-        .single();  
-        console.log("ROLE =", profile.role);
-console.log("TRIAL END =", profile.trial_end_date);
-console.log("STATUS =", profile.subscription_status);
-
-            localStorage.setItem(
-                "access_token",
-                data.session.access_token
-            );
-
-            localStorage.setItem(
-                "role",
-                profile.role
-            );
- // ======================
-// TRIAL VALIDATION
-// ======================
-
-if (profile.role !== "admin") {
-
-    const today =
-        new Date();
-
-    const trialEnd =
-        new Date(
-            profile.trial_end_date
-        );
-        console.log("TODAY =", today);
-console.log("TRIAL DATE =", trialEnd);
-console.log("TODAY > TRIAL ?", today > trialEnd);
-console.log("PROFILE =", profile);
-console.log("ACCOUNT STATUS =", profile.status);
-console.log("SUB STATUS =", profile.subscription_status);  
-    const status =
-        profile.subscription_status;
-       alert(
-"STATUS = " +
-profile.status
-);
-        if (
-    profile.status ===
-    "suspended"
-){
-
-    msg.style.color =
-    "red";
-
-    msg.innerText =
-    "Account Suspended. Contact Admin.";
-
-    await supabaseClient
-    .auth
-    .signOut();
-
-    localStorage.clear();
-
-    return;
-}
-if (
-    status !== "paid" &&
-    today > trialEnd
-) {
-
-    await supabaseClient
-    .auth
-    .signOut();
-
-    localStorage.clear();
-
-    window.location.href =
-        "subscription.html";
-
-    return;
-}
-}
-
-            localStorage.setItem(
-                "trial_end_date",
-                profile.trial_end_date
-            );
-
-            localStorage.setItem(
-                "subscription_status",
-                profile.subscription_status
-            );
-
-            msg.style.color = "green";
-            msg.innerText =
-                "Login Success 🚀";
-if(profile.role !== "admin"){
-
-    msg.style.color = "red";
-
-    msg.innerText =
-    "Only Admin Login Allowed";
-
-    await supabaseClient.auth.signOut();
-
-    localStorage.clear();
-
-    return;
-}
-
-msg.style.color = "green";
-msg.innerText = "Admin Login Success 🚀";
-
-setTimeout(() => {
-
-    window.location.href =
-    "admin.html";
-
-},1000);
-
-        } catch (err) {
-
-            console.error(err);
+        if (!profile) {
 
             msg.style.color = "red";
-            msg.innerText =
-                "Server Error";
-        }
-    }
 
-    document
-        .getElementById("loginBtn")
-        .addEventListener("click", login);
+            msg.innerText =
+                "Profile not found";
+
+            return;
+        }
+
+        if (profile.role !== "admin") {
+
+            await supabaseClient.auth.signOut();
+
+            localStorage.clear();
+
+            msg.style.color = "red";
+
+            msg.innerText =
+                "Only Admin Login Allowed";
+
+            return;
+        }
+
+        localStorage.setItem(
+            "access_token",
+            data.session.access_token
+        );
+
+        localStorage.setItem(
+            "role",
+            profile.role
+        );
+
+        msg.style.color = "green";
+
+        msg.innerText =
+            "Admin Login Success 🚀";
+
+        setTimeout(() => {
+
+            window.location.href =
+                "admin.html";
+
+        }, 1000);
+
+    } catch (err) {
+
+        console.error(err);
+
+        msg.style.color = "red";
+
+        msg.innerText =
+            "Server Error";
+    }
+}
+
+document
+    .getElementById("loginBtn")
+    .addEventListener("click", login);
 
 </script>
 
