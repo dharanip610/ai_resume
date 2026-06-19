@@ -42,7 +42,7 @@ window.uploadResume = async function () {
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await fetch("http://127.0.0.1:8000/upload", {
+        const res = await fetch("https://ai-resume-xbi6.onrender.com/upload", {
             method: "POST",
             headers: {
                 Authorization: "Bearer " + token

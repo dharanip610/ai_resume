@@ -117,7 +117,7 @@ function exportExcel() {
         localStorage.getItem("access_token");
 
     fetch(
-          "http://127.0.0.1:8000/export/excel",
+          "https://ai-resume-xbi6.onrender.com/export/excel",
         {
             headers: {
                 Authorization:
@@ -147,7 +147,7 @@ function exportCSV() {
         localStorage.getItem("access_token");
 
     fetch(
-        "http://127.0.0.1:8000/export/csv",
+        "https://ai-resume-xbi6.onrender.com/export/csv",
         {
             headers: {
                 Authorization:
@@ -186,7 +186,7 @@ async function loadDashboard() {
         }
 
         const res = await fetch(
-            "http://127.0.0.1:8000/dashboard",
+            "https://ai-resume-xbi6.onrender.com/dashboard",
             {
                 method: "GET",
                 headers: {
