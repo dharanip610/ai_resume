@@ -40,7 +40,7 @@ transition:.3s;
 }
 
 nav a:hover{
-color:#2563eb;
+color:#1d4ed8;
 }
 
 /* CONTAINER */
@@ -115,70 +115,28 @@ font-family:'Segoe UI',sans-serif;
 }
 
 button:hover{
-background:#1d4ed8;
+opacity:0.9;
 }
 
-/* CONTACT MODAL */
-
-.contact-modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.5);
-z-index:9999;
+.approve-btn{
+background:#16a34a;
 }
 
-.contact-modal-content{
-background:white;
-width:90%;
-max-width:500px;
-margin:80px auto;
-padding:30px;
-border-radius:24px;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
-position:relative;
+.approve-btn:hover{
+opacity:0.9;
 }
 
-.close-contact{
-position:absolute;
-right:20px;
-top:12px;
-font-size:30px;
-cursor:pointer;
-color:#2563eb;
+.reject-btn{
+background:#ef4444;
 }
 
-#contactModalBody{
-line-height:1.8;
-color:#475569;
-}
-
-#contactModalBody h3{
-color:#2563eb;
-margin-bottom:15px;
-}
-
-#contactModalBody a{
-display:inline-block;
-margin-top:12px;
-margin-right:10px;
-text-decoration:none;
-color:white;
-background:#2563eb;
-padding:10px 15px;
-border-radius:8px;
-font-weight:600;
-font-family:'Segoe UI',sans-serif;
-}
-
-#contactModalBody a:hover{
-background:#1d4ed8;
+.reject-btn:hover{
+opacity:0.9;
 }
 
 /* MOBILE */
 
 @media(max-width:768px){
-
 
 .navbar{
     flex-direction:column;
@@ -206,9 +164,31 @@ table{
     white-space:nowrap;
 }
 
-.contact-modal-content{
-    width:95%;
-    margin:30px auto;
-    padding:20px;
 }
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:9999;
+}
+
+.modal-content{
+    background:white;
+    width:90%;
+    max-width:600px;
+    margin:80px auto;
+    padding:30px;
+    border-radius:20px;
+}
+
+.close{
+    float:right;
+    font-size:28px;
+    cursor:pointer;
+}
+
+#credentialBody{
+    margin-top:20px;
+    line-height:2;
 }

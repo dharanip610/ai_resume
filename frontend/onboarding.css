@@ -6,168 +6,139 @@ font-family:'Segoe UI',sans-serif;
 }
 
 body{
-    background:#f8fafc;
-    color:#0f172a;
-}
-
-.navbar{
-    background:white;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:18px 40px;
-    border-bottom:1px solid #e2e8f0;
-    box-shadow:none;
-}
-
-.logo{
-font-size:24px;
-font-weight:700;
-color:#2563eb;
-}
-
-nav{
+background:#f4f7fc;
+min-height:100vh;
 display:flex;
-gap:20px;
+justify-content:center;
+align-items:center;
+padding:20px;
 }
 
-nav a{
-text-decoration:none;
-color:#64748b;
-font-weight:600;
+.login-wrapper{
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
-nav a:hover{
-  color:#2563eb;    
-}
-
-.container{
-    width:95%;
-    max-width:1400px;
-    margin:auto;
-    padding:40px 20px;
-}
-
-
-.header{
-    text-align:center;
-    margin:40px 0;
-}
-
-.header h1{
-    font-size:56px;
-    color:#2563eb;
-    margin-bottom:10px;
-}
-
-.header p{
-    color:#64748b;
-    font-size:18px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    border-radius:20px;
-    overflow:hidden;
-    box-shadow:0 6px 20px rgba(0,0,0,.05);
-}
-
-thead{
-  background:#2563eb;
-}
-
-thead th{
-color:white;
-padding:16px;
-text-align:left;
-}
-
-tbody td{
-padding:16px;
-border-bottom:1px solid #eef2ff;
-}
-
-tbody tr:hover{
-    background:#eff6ff;
-}
-
-
-button{
-border:none;
-   background:#2563eb;
-color:white;
-padding:10px 15px;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-}
-button:hover{
-    opacity:.95;
-}
-
-.modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.5);
-z-index:9999;
-}
-
-.modal-content{
-background:white;
-width:90%;
-max-width:600px;
-margin:80px auto;
+.login-card{
+background:#ffffff;
+width:100%;
+max-width:500px;
 padding:30px;
-border-radius:20px;
-position:relative;
+border-radius:24px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-.close{
-position:absolute;
-right:20px;
-top:15px;
-font-size:30px;
+.login-card h1{
+color:#405580;
+margin-bottom:10px;
+font-size:32px;
+}
+
+.login-subtitle{
+color:#657daa;
+margin-bottom:20px;
+line-height:1.5;
+font-size:14px;
+}
+
+.login-card input{
+width:100%;
+padding:12px;
+margin-bottom:12px;
+border:1px solid #dbe4ff;
+border-radius:12px;
+font-size:14px;
+outline:none;
+}
+
+.login-card input:focus
+
+.login-card label{
+display:block;
+text-align:left;
+margin-top:8px;
+margin-bottom:6px;
+font-weight:600;
+color:#405580;
+font-size:13px;
+}
+
+input[type="file"]{
+padding:10px;
+background:#f8fbff;
+}
+
+.primary-btn{
+width:100%;
+border:none;
+padding:13px;
+border-radius:12px;
+background:#405580;
+color:white;
+font-size:15px;
+font-weight:600;
 cursor:pointer;
+margin-top:10px;
+margin-bottom:10px;
 }
 
-#credentialBody{
-margin-top:20px;
-line-height:2;
+.primary-btn:hover
+
+.secondary-btn{
+width:100%;
+border:none;
+padding:13px;
+border-radius:12px;
+background:#eef4ff;
+color:#405580;
+font-weight:600;
+cursor:pointer;
+margin-top:10px;
 }
 
-/* MOBILE */
+.secondary-btn:hover
+
+#msg{
+margin-top:15px;
+font-weight:600;
+}
+
+.note{
+margin-top:10px;
+color:#64748b;
+font-size:13px;
+line-height:1.5;
+}
+
 @media(max-width:768px){
 
-    .navbar{
-        flex-direction:column;
-        gap:15px;
-        text-align:center;
-    }
 
-    nav{
-        flex-wrap:wrap;
-        justify-content:center;
-    }
+.login-card{
+    padding:22px;
+    max-width:100%;
+}
 
-    .header h1{
-        font-size:34px;
-    }
+.login-card h1{
+    font-size:26px;
+}
+}
+.secondary-btn{
+    width:100% !important;
+    background:#eef4ff !important;
+    color:#405580 !important;
+    border:none !important;
+    padding:14px !important;
+    border-radius:12px !important;
+    font-size:15px !important;
+    font-weight:600 !important;
+    cursor:pointer !important;
+    margin-top:10px !important;
+    font-family:'Segoe UI',sans-serif !important;
+}
 
-    .header p{
-        font-size:16px;
-    }
-
-    table{
-        display:block;
-        overflow-x:auto;
-        white-space:nowrap;
-    }
-
-    .modal-content{
-        width:95%;
-        margin:30px auto;
-    }
+.secondary-btn:hover{
+    background:#dbeafe !important;
 }

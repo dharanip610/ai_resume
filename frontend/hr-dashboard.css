@@ -247,3 +247,7 @@ td{
     }
 
 }
+.login-card{
+    max-width:520px;
+    padding:25px;
+}

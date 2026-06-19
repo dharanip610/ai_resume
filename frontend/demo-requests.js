@@ -46,11 +46,9 @@ onclick="viewContact('${r.id}')">
 Contact
 
 </button>
-
-
 <button
 class="reject-btn"
-onclick="rejectRequest('${r.id}')">
+onclick="rejectDemo('${r.id}')">
 
 Reject
 
