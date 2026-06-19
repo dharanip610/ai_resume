@@ -560,5 +560,17 @@ async function activateUser(hrId){
     }
 
 }
+async function logout() {
+
+    try {
+        await supabaseClient.auth.signOut();
+    } catch(err) {
+        console.log(err);
+    }
+
+    localStorage.clear();
+
+    window.location.href = "login.html";
+}
 // INIT
 loadAdminData();

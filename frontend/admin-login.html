@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Login - AI Resume ATS</title>
+    <title>Admin Login - AI Resume ATS</title>
     <link rel="stylesheet" href="login.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -25,7 +25,7 @@
             📄
         </div>
 
-        <h1>AI ATS Platform</h1>
+        <h1>Admin Login</h1>
 
         <p class="login-subtitle">
             HR Recruitment & Candidate Management
@@ -41,11 +41,11 @@
             id="password"
             placeholder="Enter Password">
 
-        <button
-            id="loginBtn"
-            class="primary-btn">
-            HR Login
-        </button>
+       <button
+id="loginBtn"
+class="primary-btn">
+Admin Login
+</button>
 
         <div id="msg"></div>
 
@@ -218,13 +218,12 @@ if (
             msg.style.color = "green";
             msg.innerText =
                 "Login Success 🚀";
-
-           if(profile.role === "admin"){
+if(profile.role !== "admin"){
 
     msg.style.color = "red";
 
     msg.innerText =
-    "Please use Admin Login Page";
+    "Only Admin Login Allowed";
 
     await supabaseClient.auth.signOut();
 
@@ -234,14 +233,14 @@ if (
 }
 
 msg.style.color = "green";
-msg.innerText = "Login Success 🚀";
+msg.innerText = "Admin Login Success 🚀";
 
 setTimeout(() => {
 
     window.location.href =
-    "dashboard.html";
+    "admin.html";
 
-},1000); 
+},1000);
 
         } catch (err) {
 
