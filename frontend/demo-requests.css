@@ -4,25 +4,24 @@ padding:0;
 box-sizing:border-box;
 font-family:'Segoe UI',sans-serif;
 }
-
 body{
-background:#f4f7fc;
-color:#405580;
+    background:#f8fafc;
+    color:#0f172a;
 }
-
 .navbar{
-background:white;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px 30px;
-box-shadow:0 2px 15px rgba(0,0,0,.08);
+    background:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px;
+    border-bottom:1px solid #e2e8f0;
+    box-shadow:none;
 }
 
 .logo{
-font-size:24px;
-font-weight:700;
-color:#405580;
+    font-size:24px;
+    font-weight:700;
+    color:#2563eb;
 }
 
 nav{
@@ -46,19 +45,20 @@ max-width:1400px;
 margin:auto;
 padding:30px 0;
 }
-
 .header{
-margin-bottom:25px;
+    text-align:center;
+    margin:40px 0;
 }
 
 .header h1{
-font-size:40px;
-color:#405580;
-margin-bottom:8px;
+    font-size:56px;
+    color:#2563eb;
+    margin-bottom:10px;
 }
 
 .header p{
-color:#657daa;
+    color:#64748b;
+    font-size:18px;
 }
 
 table{
@@ -69,9 +69,8 @@ border-radius:18px;
 overflow:hidden;
 box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
-
 thead{
-background:#405580;
+    background:#2563eb;
 }
 
 thead th{
@@ -88,9 +87,8 @@ border-bottom:1px solid #eef2ff;
 tbody tr:hover{
     background:#f4f7fc;
 }
-
 button{
-    background:#405580;
+    background:#2563eb;
     color:white;
     border:none;
     padding:10px 15px;
@@ -100,7 +98,7 @@ button{
 }
 
 button:hover{
-    background:#324a72;
+    background:#1d4ed8;
 }
 
 /* CONTACT MODAL */
@@ -132,10 +130,9 @@ cursor:pointer;
 color:#405580;
 }
 
-#contactModalBody{
-line-height:2;
+#contactModalBody a{
+    background:#2563eb;
 }
-
 #contactModalBody a{
 display:inline-block;
 margin-top:10px;
@@ -145,9 +142,8 @@ background:#405580;
 padding:10px 15px;
 border-radius:8px;
 }
-
 #contactModalBody a:hover{
-    background:#324a72;
+    background:#1d4ed8;
 }
 
 /* MOBILE */

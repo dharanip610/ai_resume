@@ -6,23 +6,24 @@ font-family:'Segoe UI',sans-serif;
 }
 
 body{
-background:#f4f7fc;
-color:#405580;
+    background:#f8fafc;
+    color:#0f172a;
 }
 
 .navbar{
-background:#ffffff;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px 30px;
-box-shadow:0 2px 15px rgba(0,0,0,.08);
+    background:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px;
+    border-bottom:1px solid #e2e8f0;
+    box-shadow:none;
 }
 
 .logo{
 font-size:24px;
 font-weight:700;
-color:#405580;
+color:#2563eb;
 }
 
 nav{
@@ -32,44 +33,49 @@ gap:20px;
 
 nav a{
 text-decoration:none;
-color:#657daa;
+color:#64748b;
 font-weight:600;
 }
 
-nav a:hover
-
-.container{
-width:95%;
-max-width:1400px;
-margin:auto;
-padding:30px 0;
+nav a:hover{
+  color:#2563eb;    
 }
 
+.container{
+    width:95%;
+    max-width:1400px;
+    margin:auto;
+    padding:40px 20px;
+}
+
+
 .header{
-margin-bottom:25px;
+    text-align:center;
+    margin:40px 0;
 }
 
 .header h1{
-font-size:40px;
-color:#405580;
-margin-bottom:8px;
+    font-size:56px;
+    color:#2563eb;
+    margin-bottom:10px;
 }
 
 .header p{
-color:#657daa;
+    color:#64748b;
+    font-size:18px;
 }
 
 table{
-width:100%;
-border-collapse:collapse;
-background:white;
-border-radius:18px;
-overflow:hidden;
-box-shadow:0 5px 20px rgba(0,0,0,.08);
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,.05);
 }
 
 thead{
-background:#405580;
+  background:#2563eb;
 }
 
 thead th{
@@ -83,19 +89,23 @@ padding:16px;
 border-bottom:1px solid #eef2ff;
 }
 
-tbody tr:hover
+tbody tr:hover{
+    background:#eff6ff;
+}
+
 
 button{
 border:none;
-background:#405580;
+   background:#2563eb;
 color:white;
 padding:10px 15px;
 border-radius:8px;
 cursor:pointer;
 font-weight:600;
 }
-
-button:hover
+button:hover{
+    opacity:.95;
+}
 
 .modal{
 display:none;
@@ -129,40 +139,35 @@ line-height:2;
 }
 
 /* MOBILE */
-
 @media(max-width:768px){
 
+    .navbar{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
 
-.navbar{
-    flex-direction:column;
-    gap:15px;
-    text-align:center;
-}
+    nav{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
 
-nav{
-    flex-wrap:wrap;
-    justify-content:center;
-}
+    .header h1{
+        font-size:34px;
+    }
 
-.header h1{
-    font-size:28px;
-    text-align:center;
-}
+    .header p{
+        font-size:16px;
+    }
 
-.header p{
-    text-align:center;
-}
+    table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
 
-table{
-    display:block;
-    overflow-x:auto;
-    white-space:nowrap;
-}
-
-.modal-content{
-    width:95%;
-    margin:30px auto;
-}
-
-
+    .modal-content{
+        width:95%;
+        margin:30px auto;
+    }
 }
